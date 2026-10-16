@@ -62,7 +62,7 @@ export function Dialog({
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative w-full rounded-2xl bg-[var(--card-bg)] border border-[var(--card-border)] p-6 shadow-2xl transition-all z-10",
+          "relative w-full rounded-2xl bg-card border border-border p-6 shadow-2xl transition-all z-10",
           maxWidths[maxWidth],
           className
         )}
@@ -71,7 +71,7 @@ export function Dialog({
           onClick={onClose}
           type="button"
           aria-label="Fechar"
-          className="absolute right-4 top-4 rounded-lg p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)] transition-colors cursor-pointer"
+          className="absolute right-4 top-4 rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
         >
           <X className="h-5 w-5" />
         </button>
@@ -79,12 +79,12 @@ export function Dialog({
         {(title || description) && (
           <div className="mb-5 pr-8">
             {title && (
-              <h2 className="text-xl font-semibold tracking-tight text-[var(--foreground)]">
+              <h2 className="text-xl font-semibold tracking-tight text-foreground">
                 {title}
               </h2>
             )}
             {description && (
-              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {description}
               </p>
             )}

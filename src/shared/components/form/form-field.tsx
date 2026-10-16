@@ -25,16 +25,16 @@ export function FormField({
       {label && (
         <label
           htmlFor={htmlFor}
-          className="block text-sm font-medium text-[var(--foreground)]"
+          className="block text-sm font-medium text-foreground"
         >
-          {label} {required && <span className="text-red-500">*</span>}
+          {label} {required && <span className="text-danger">*</span>}
         </label>
       )}
       {children}
       {hint && !error && (
-        <p className="text-xs text-[var(--muted-foreground)]">{hint}</p>
+        <p className="text-xs text-muted-foreground">{hint}</p>
       )}
-      {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
+      {error && <p className="text-xs text-danger font-medium">{error}</p>}
     </div>
   );
 }

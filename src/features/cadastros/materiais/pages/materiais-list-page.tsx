@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Plus, Search, RefreshCw, Layers, Eye, Edit2, AlertTriangle, CheckCircle, Package } from "lucide-react";
+import { Plus, Search, RefreshCw, Edit2, Package } from "lucide-react";
 import { useDebounce } from "@/shared/hooks/use-debounce";
 import { usePagination } from "@/shared/hooks/use-pagination";
 import {
@@ -12,14 +12,18 @@ import { MaterialTable } from "../components/material-table";
 import { MaterialForm } from "../components/material-form";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
-import { Card, CardContent } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
 import { Dialog } from "@/shared/components/ui/dialog";
+import { ConfirmDialog } from "@/shared/components/ui/confirm-dialog";
+import { PageHeader } from "@/shared/components/ui/page-header";
+import { useToast } from "@/shared/components/ui/toast";
+import { getApiErrorMessage } from "@/shared/lib/api-error";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
 import type { MaterialResponse } from "@/shared/api/schema";
 import type { MaterialFormData } from "../schemas";
 
 export function MateriaisListPage() {
+  const toast = useToast();
   const { page, size, setPage, setSize } = usePagination({ initialSize: 20 });
   const [searchCodigo, setSearchCodigo] = React.useState("");
   const [searchDescricao, setSearchDescricao] = React.useState("");
@@ -49,14 +53,6 @@ export function MateriaisListPage() {
   const [selectedMaterial, setSelectedMaterial] = React.useState<MaterialResponse | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<MaterialResponse | null>(null);
 
-  // Feedback toast message
-  const [feedbackMessage, setFeedbackMessage] = React.useState<string | null>(null);
-
-  const showFeedback = (msg: string) => {
-    setFeedbackMessage(msg);
-    setTimeout(() => setFeedbackMessage(null), 4000);
-  };
-
   const handleOpenCreate = () => {
     setSelectedMaterial(null);
     setIsFormOpen(true);
@@ -76,22 +72,20 @@ export function MateriaisListPage() {
           onSuccess: () => {
             setIsFormOpen(false);
             setSelectedMaterial(null);
-            showFeedback("Material atualizado com sucesso!");
+            toast.success("Material atualizado", data.codigo);
           },
-          onError: (err: any) => {
-            alert(err?.response?.data?.message || err?.message || "Erro ao atualizar material.");
-          },
+          onError: (err) =>
+            toast.error("Não foi possível atualizar o material", getApiErrorMessage(err, "Tente novamente.")),
         }
       );
     } else {
       createMutation.mutate(data, {
         onSuccess: () => {
           setIsFormOpen(false);
-          showFeedback("Material cadastrado com sucesso!");
+          toast.success("Material cadastrado", data.codigo);
         },
-        onError: (err: any) => {
-          alert(err?.response?.data?.message || err?.message || "Erro ao cadastrar material.");
-        },
+        onError: (err) =>
+          toast.error("Não foi possível cadastrar o material", getApiErrorMessage(err, "Tente novamente.")),
       });
     }
   };
@@ -100,114 +94,82 @@ export function MateriaisListPage() {
     if (deleteTarget) {
       deleteMutation.mutate(deleteTarget.id, {
         onSuccess: () => {
+          toast.success("Material excluído", deleteTarget.codigo);
           setDeleteTarget(null);
-          showFeedback("Material excluído com sucesso!");
         },
-        onError: (err: any) => {
-          alert(err?.response?.data?.message || err?.message || "Erro ao excluir material.");
-        },
+        onError: (err) =>
+          toast.error("Não foi possível excluir o material", getApiErrorMessage(err, "Tente novamente.")),
       });
     }
   };
 
   return (
     <div className="space-y-6 w-full">
-      {/* Feedback Toast */}
-      {feedbackMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-xl border border-emerald-500/20 bg-emerald-500/90 text-white px-4 py-3 shadow-xl backdrop-blur-md animate-fade-in text-sm font-medium">
-          <CheckCircle className="h-5 w-5" />
-          <span>{feedbackMessage}</span>
-        </div>
-      )}
-
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-gradient-to-tr from-[var(--brand-purple)] to-[var(--brand-blue)] text-white shadow-sm">
-              <Layers className="h-5 w-5" />
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--foreground)]">
-                Catálogo de Materiais
-              </h1>
-              <p className="text-sm text-[var(--muted-foreground)] mt-0.5">
-                Consulte, cadastre e gerencie insumos e itens industriais conectados ao backend
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2.5">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            disabled={isFetching}
-            className="gap-2 h-9"
-            title="Sincronizar com o backend"
-          >
-            <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
-            <span className="hidden sm:inline">Atualizar</span>
-          </Button>
-
-          <PermissionGate permission="cadastros.materiais:create">
+      <PageHeader
+        icon={Package}
+        title="Materiais"
+        description="Consulte, cadastre e mantenha os itens usados em compras e produção"
+        actions={
+          <>
             <Button
-              variant="gradient"
+              variant="outline"
               size="sm"
-              onClick={handleOpenCreate}
-              className="gap-2 h-9 font-medium shadow-sm"
+              onClick={() => refetch()}
+              disabled={isFetching}
+              className="h-9"
+              title="Recarregar lista"
             >
-              <Plus className="h-4 w-4" />
-              <span>Novo Material</span>
+              <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
+              <span className="hidden sm:inline">Atualizar</span>
             </Button>
-          </PermissionGate>
+            <PermissionGate permission="cadastros.materiais:create">
+              <Button variant="primary" size="sm" onClick={handleOpenCreate} className="h-9">
+                <Plus className="h-4 w-4" />
+                Novo material
+              </Button>
+            </PermissionGate>
+          </>
+        }
+      />
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="grid flex-1 gap-3 sm:max-w-2xl sm:grid-cols-2">
+          <Input
+            placeholder="Buscar por código"
+            aria-label="Buscar por código"
+            value={searchCodigo}
+            onChange={(e) => {
+              setSearchCodigo(e.target.value);
+              setPage(0);
+            }}
+            leftIcon={<Search className="h-4 w-4" />}
+          />
+          <Input
+            placeholder="Buscar por descrição"
+            aria-label="Buscar por descrição"
+            value={searchDescricao}
+            onChange={(e) => {
+              setSearchDescricao(e.target.value);
+              setPage(0);
+            }}
+            leftIcon={<Search className="h-4 w-4" />}
+          />
         </div>
+        {(searchCodigo || searchDescricao) && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setSearchCodigo("");
+              setSearchDescricao("");
+              setPage(0);
+            }}
+            className="self-start text-muted-foreground sm:self-center"
+          >
+            Limpar filtros
+          </Button>
+        )}
       </div>
-
-      {/* Filters Bar */}
-      <Card className="w-full">
-        <CardContent className="p-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-            <Input
-              placeholder="Buscar por código (ex: AMOSTRA, MAT)..."
-              value={searchCodigo}
-              onChange={(e) => {
-                setSearchCodigo(e.target.value);
-                setPage(0);
-              }}
-              leftIcon={<Search className="h-4 w-4" />}
-            />
-
-            <Input
-              placeholder="Buscar por descrição..."
-              value={searchDescricao}
-              onChange={(e) => {
-                setSearchDescricao(e.target.value);
-                setPage(0);
-              }}
-              leftIcon={<Search className="h-4 w-4" />}
-            />
-
-            {(searchCodigo || searchDescricao) && (
-              <div className="flex items-center">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setSearchCodigo("");
-                    setSearchDescricao("");
-                    setPage(0);
-                  }}
-                  className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-                >
-                  Limpar filtros
-                </Button>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Table Section (100% width, fully responsive) */}
       <div className="w-full">
@@ -229,19 +191,19 @@ export function MateriaisListPage() {
       <Dialog
         open={!!viewTarget}
         onClose={() => setViewTarget(null)}
-        title="Detalhes do Material"
+        title="Detalhes do material"
         description="Visualização dos dados cadastrais do item no sistema."
         maxWidth="lg"
       >
         {viewTarget && (
           <div className="space-y-5">
-            <div className="flex items-start gap-4 p-4 rounded-xl bg-[var(--muted)]/50 border border-[var(--card-border)]">
-              <div className="p-3 rounded-lg bg-[var(--brand-purple)]/10 text-[var(--brand-purple)] shrink-0">
+            <div className="flex items-start gap-4 p-4 rounded-xl bg-muted/50 border border-border">
+              <div className="p-3 rounded-lg bg-primary/10 text-primary shrink-0">
                 <Package className="h-6 w-6" />
               </div>
               <div className="space-y-1 overflow-hidden">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-sm font-bold text-[var(--brand-purple)] bg-[var(--brand-purple)]/10 px-2.5 py-0.5 rounded border border-[var(--brand-purple)]/20">
+                  <span className="font-mono text-sm font-bold text-primary bg-primary/10 px-2.5 py-0.5 rounded border border-primary/20">
                     {viewTarget.codigo}
                   </span>
                   <Badge variant="secondary">
@@ -249,37 +211,33 @@ export function MateriaisListPage() {
                     {viewTarget.unidadeMedida?.nome || "-"}
                   </Badge>
                 </div>
-                <h3 className="text-base font-semibold text-[var(--foreground)] pt-1">
+                <h3 className="text-base font-semibold text-foreground pt-1">
                   {viewTarget.descricao}
                 </h3>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div className="p-3 rounded-lg bg-[var(--card-bg)] border border-[var(--card-border)]">
-                <span className="text-[var(--muted-foreground)] block mb-1">Identificador Único (UUID)</span>
-                <span className="font-mono text-[var(--foreground)] select-all break-all">{viewTarget.id}</span>
+              <div className="p-3 rounded-lg bg-card border border-border">
+                <span className="text-muted-foreground block mb-1">Identificador Único (UUID)</span>
+                <span className="font-mono text-foreground select-all break-all">{viewTarget.id}</span>
               </div>
-              <div className="p-3 rounded-lg bg-[var(--card-bg)] border border-[var(--card-border)]">
-                <span className="text-[var(--muted-foreground)] block mb-1">Unidade de Medida</span>
-                <span className="font-semibold text-[var(--foreground)]">
+              <div className="p-3 rounded-lg bg-card border border-border">
+                <span className="text-muted-foreground block mb-1">Unidade de Medida</span>
+                <span className="font-semibold text-foreground">
                   {viewTarget.unidadeMedida?.nome} ({viewTarget.unidadeMedida?.sigla})
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--card-border)]">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
               <Button variant="outline" onClick={() => setViewTarget(null)}>
                 Fechar
               </Button>
               <PermissionGate permission="cadastros.materiais:update">
-                <Button
-                  variant="gradient"
-                  onClick={() => handleOpenEdit(viewTarget)}
-                  className="gap-1.5"
-                >
+                <Button variant="primary" onClick={() => handleOpenEdit(viewTarget)}>
                   <Edit2 className="h-4 w-4" />
-                  <span>Editar este Material</span>
+                  <span>Editar material</span>
                 </Button>
               </PermissionGate>
             </div>
@@ -291,7 +249,7 @@ export function MateriaisListPage() {
       <Dialog
         open={isFormOpen}
         onClose={() => setIsFormOpen(false)}
-        title={selectedMaterial ? "Editar Material" : "Novo Cadastro de Material"}
+        title={selectedMaterial ? "Editar material" : "Novo material"}
         description={
           selectedMaterial
             ? `Atualize as informações cadastrais do material ${selectedMaterial.codigo}.`
@@ -299,6 +257,7 @@ export function MateriaisListPage() {
         }
       >
         <MaterialForm
+          key={selectedMaterial?.id ?? "new"}
           initialData={selectedMaterial}
           onSubmit={handleFormSubmit}
           onCancel={() => setIsFormOpen(false)}
@@ -306,56 +265,22 @@ export function MateriaisListPage() {
         />
       </Dialog>
 
-      {/* 3. Modal Dialog: CONFIRM DELETE */}
-      <Dialog
+      {/* 3. Confirmação de exclusão */}
+      <ConfirmDialog
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
-        maxWidth="md"
-        title="Confirmar Exclusão de Material"
-        description="Esta ação removerá o material do catálogo ativo no sistema."
+        onConfirm={handleConfirmDelete}
+        isLoading={deleteMutation.isPending}
+        title="Excluir material"
+        description="O material será removido do catálogo."
+        confirmLabel="Excluir material"
       >
-        <div className="space-y-4">
-          <div className="flex items-start gap-3 p-4 rounded-xl border border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-400">
-            <AlertTriangle className="h-6 w-6 shrink-0 mt-0.5" />
-            <div className="text-sm">
-              <p className="font-semibold">Atenção ao excluir o item:</p>
-              <p className="mt-1 text-xs opacity-90">
-                Tem certeza que deseja excluir o material abaixo?
-              </p>
-            </div>
-          </div>
-
-          <div className="rounded-xl bg-[var(--muted)]/60 p-4 border border-[var(--card-border)] space-y-1">
-            <div className="font-mono text-sm font-bold text-[var(--foreground)]">
-              {deleteTarget?.codigo}
-            </div>
-            <div className="text-xs text-[var(--muted-foreground)]">
-              {deleteTarget?.descricao}
-            </div>
-            <div className="text-xs text-[var(--muted-foreground)] pt-1">
-              Unidade: <span className="font-semibold">{deleteTarget?.unidadeMedida?.sigla}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--card-border)]">
-            <Button
-              variant="outline"
-              onClick={() => setDeleteTarget(null)}
-              disabled={deleteMutation.isPending}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="danger"
-              onClick={handleConfirmDelete}
-              isLoading={deleteMutation.isPending}
-              className="gap-1.5 shadow-sm"
-            >
-              Sim, Excluir Material
-            </Button>
-          </div>
-        </div>
-      </Dialog>
+        <p className="font-mono text-sm font-bold text-foreground">{deleteTarget?.codigo}</p>
+        <p className="text-xs text-muted-foreground">{deleteTarget?.descricao}</p>
+        <p className="pt-1 text-xs text-muted-foreground">
+          Unidade: <span className="font-semibold">{deleteTarget?.unidadeMedida?.sigla}</span>
+        </p>
+      </ConfirmDialog>
     </div>
   );
 }

@@ -8,9 +8,12 @@ import {
 } from "react-router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/shared/api/query-client";
-import { ThemeProvider } from "@/shared/hooks/use-theme";
+import { ThemeProvider, THEME_STORAGE_KEY } from "@/shared/hooks/use-theme";
 import type { Route } from "./+types/root";
+import { ToastProvider } from "@/shared/components/ui/toast";
 import "./app.css";
+
+const THEME_BOOT_SCRIPT = `(function(){try{var t=localStorage.getItem("${THEME_STORAGE_KEY}");var d=t==="dark"||(t==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);if(d)document.documentElement.classList.add("dark")}catch(e){}})();`;
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -21,7 +24,7 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    href: "https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&family=Space+Grotesk:wght@500;600;700&display=swap",
   },
 ];
 
@@ -33,6 +36,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        {/* Aplica o tema salvo antes da primeira pintura (evita flash claro → escuro) */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
       </head>
       <body>
         {children}
@@ -47,7 +52,9 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light">
-        <Outlet />
+        <ToastProvider>
+          <Outlet />
+        </ToastProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
@@ -71,18 +78,18 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
   return (
     <main className="pt-24 p-6 max-w-xl mx-auto text-center">
-      <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8 shadow-lg">
-        <h1 className="text-3xl font-bold text-[var(--foreground)]">{message}</h1>
-        <p className="mt-2 text-sm text-[var(--muted-foreground)]">{details}</p>
+      <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
+        <h1 className="font-display text-3xl font-bold text-foreground">{message}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{details}</p>
         {stack && (
-          <pre className="mt-4 w-full p-4 overflow-x-auto text-left text-xs bg-[var(--muted)] rounded-lg text-red-500 font-mono">
+          <pre className="mt-4 w-full p-4 overflow-x-auto text-left text-xs bg-muted rounded-lg text-danger font-mono">
             <code>{stack}</code>
           </pre>
         )}
         <div className="mt-6">
           <a
             href="/"
-            className="inline-flex items-center px-4 py-2 rounded-lg bg-[#7609e8] text-white text-sm font-medium hover:opacity-90"
+            className="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary-hover"
           >
             Voltar ao início
           </a>

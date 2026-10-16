@@ -64,7 +64,7 @@ export function MaterialForm({
           required
         />
 
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--card-border)]">
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-border">
           <Button
             type="button"
             variant="outline"
@@ -75,10 +75,10 @@ export function MaterialForm({
           </Button>
           <Button
             type="submit"
-            variant="gradient"
+            variant="primary"
             isLoading={isLoading}
           >
-            {initialData ? "Salvar Alterações" : "Cadastrar Material"}
+            {initialData ? "Salvar alterações" : "Cadastrar material"}
           </Button>
         </div>
       </form>

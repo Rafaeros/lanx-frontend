@@ -6,12 +6,13 @@ import { loginSchema, type LoginFormData } from "../schemas";
 import { useLogin } from "../api/use-login";
 import { FormInput } from "@/shared/components/form/form-input";
 import { Button } from "@/shared/components/ui/button";
-import { Lock, User, AlertCircle, ArrowRight } from "lucide-react";
+import { Lock, User, AlertCircle } from "lucide-react";
+import { getApiErrorMessage } from "@/shared/lib/api-error";
 
 export function LoginForm() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const redirectUrl = searchParams.get("redirect") || "/cadastros/materiais";
+  const redirectUrl = searchParams.get("redirect") || "/app";
 
   const { mutate: login, isPending } = useLogin();
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
@@ -30,12 +31,10 @@ export function LoginForm() {
       onSuccess: () => {
         navigate(redirectUrl);
       },
-      onError: (error: any) => {
-        const msg =
-          error?.response?.data?.message ||
-          error?.message ||
-          "Credenciais inválidas. Verifique seu usuário e senha.";
-        setErrorMessage(msg);
+      onError: (error) => {
+        setErrorMessage(
+          getApiErrorMessage(error, "Usuário ou senha incorretos. Confira os dados e tente novamente.")
+        );
       },
     });
   };
@@ -44,7 +43,7 @@ export function LoginForm() {
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-5">
         {errorMessage && (
-          <div className="flex items-center gap-2.5 rounded-lg border border-red-500/20 bg-red-500/10 p-3.5 text-sm text-red-600 dark:text-red-400">
+          <div className="flex items-center gap-2.5 rounded-lg border border-danger/20 bg-danger/10 p-3.5 text-sm text-danger">
             <AlertCircle className="h-5 w-5 shrink-0" />
             <span>{errorMessage}</span>
           </div>
@@ -52,8 +51,8 @@ export function LoginForm() {
 
         <FormInput
           name="username"
-          label="Usuário ou Email"
-          placeholder="admin"
+          label="Usuário"
+          placeholder="seu.usuario"
           autoComplete="username"
           required
           leftIcon={<User className="h-4 w-4" />}
@@ -61,7 +60,7 @@ export function LoginForm() {
 
         <FormInput
           name="password"
-          label="Senha de Acesso"
+          label="Senha"
           type="password"
           placeholder="••••••••"
           autoComplete="current-password"
@@ -69,37 +68,19 @@ export function LoginForm() {
           leftIcon={<Lock className="h-4 w-4" />}
         />
 
-        <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)]">
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              className="rounded border-[var(--card-border)] text-[var(--brand-purple)] focus:ring-[var(--brand-purple)]"
-              defaultChecked
-            />
-            <span>Lembrar meu acesso</span>
-          </label>
-          <a
-            href="#recuperar"
-            onClick={(e) => {
-              e.preventDefault();
-              alert("Entre em contato com o administrador do sistema para redefinir sua senha.");
-            }}
-            className="hover:text-[var(--brand-purple)] transition-colors"
-          >
-            Esqueceu a senha?
-          </a>
-        </div>
-
         <Button
           type="submit"
-          variant="gradient"
+          variant="primary"
           size="lg"
-          className="w-full font-semibold text-base"
+          className="w-full font-semibold"
           isLoading={isPending}
         >
-          <span>Entrar no Sistema</span>
-          <ArrowRight className="h-4 w-4 ml-1" />
+          Entrar
         </Button>
+
+        <p className="text-center text-xs text-muted-foreground">
+          Esqueceu a senha? Peça ao administrador do sistema para redefini-la.
+        </p>
       </form>
     </FormProvider>
   );

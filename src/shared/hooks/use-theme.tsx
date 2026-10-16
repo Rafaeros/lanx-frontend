@@ -11,7 +11,7 @@ interface ThemeContextType {
 
 const ThemeContext = React.createContext<ThemeContextType | undefined>(undefined);
 
-const THEME_STORAGE_KEY = "lanx-ui-theme";
+export const THEME_STORAGE_KEY = "lanx-ui-theme";
 
 export function ThemeProvider({
   children,
@@ -22,7 +22,11 @@ export function ThemeProvider({
 }) {
   const [theme, setTheme] = React.useState<Theme>(() => {
     if (typeof window === "undefined") return defaultTheme;
-    return (localStorage.getItem(THEME_STORAGE_KEY) as Theme) || defaultTheme;
+    try {
+      return (localStorage.getItem(THEME_STORAGE_KEY) as Theme) || defaultTheme;
+    } catch {
+      return defaultTheme;
+    }
   });
 
   const [resolvedTheme, setResolvedTheme] = React.useState<"light" | "dark">("light");
@@ -42,7 +46,11 @@ export function ThemeProvider({
       root.classList.remove("dark");
     }
 
-    localStorage.setItem(THEME_STORAGE_KEY, theme);
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      // Armazenamento indisponível (modo privado): o tema vale só para a sessão
+    }
   }, [theme]);
 
   const toggleTheme = React.useCallback(() => {

@@ -11,13 +11,13 @@ export function Badge({
   ...props
 }: BadgeProps) {
   const variantStyles = {
-    default: "bg-[var(--foreground)] text-[var(--background)]",
-    secondary: "bg-[var(--muted)] text-[var(--muted-foreground)] border border-[var(--card-border)]",
-    brand: "bg-[var(--brand-purple)]/10 text-[var(--brand-purple)] border border-[var(--brand-purple)]/20",
-    success: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
-    warning: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20",
-    danger: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20",
-    outline: "text-[var(--foreground)] border border-[var(--card-border)]",
+    default: "bg-foreground text-background",
+    secondary: "bg-muted text-muted-foreground border border-border",
+    brand: "bg-primary/10 text-primary border border-primary/20",
+    success: "bg-success/10 text-success border border-success/20",
+    warning: "bg-warning/10 text-warning border border-warning/20",
+    danger: "bg-danger/10 text-danger border border-danger/20",
+    outline: "text-foreground border border-border",
   };
 
   return (

@@ -32,16 +32,16 @@ export function MaterialTable({
         header: "Código",
         width: "180px",
         cell: (item) => (
-          <span className="font-mono text-xs font-semibold text-[var(--brand-purple)] bg-[var(--brand-purple)]/5 px-2.5 py-1 rounded-md border border-[var(--brand-purple)]/15">
+          <span className="font-mono text-xs font-semibold text-primary bg-primary/5 px-2.5 py-1 rounded-md border border-primary/15">
             {item.codigo}
           </span>
         ),
       },
       {
         key: "descricao",
-        header: "Descrição do Material",
+        header: "Descrição",
         cell: (item) => (
-          <div className="font-medium text-[var(--foreground)] pr-4">
+          <div className="font-medium text-foreground pr-4">
             {item.descricao}
           </div>
         ),
@@ -49,14 +49,16 @@ export function MaterialTable({
       {
         key: "unidadeMedida",
         header: "Unidade",
-        width: "150px",
+        width: "180px",
         cell: (item) => (
-          <Badge variant="secondary" className="font-mono font-medium">
-            {item.unidadeMedida?.sigla ? item.unidadeMedida.sigla.toUpperCase() : "-"}
-            {item.unidadeMedida?.nome && item.unidadeMedida.nome !== item.unidadeMedida.sigla
-              ? ` (${item.unidadeMedida.nome})`
-              : ""}
-          </Badge>
+          <span className="inline-flex items-baseline gap-1.5 whitespace-nowrap">
+            <Badge variant="secondary" className="font-mono">
+              {item.unidadeMedida?.sigla?.toUpperCase() || "-"}
+            </Badge>
+            {item.unidadeMedida?.nome && item.unidadeMedida.nome !== item.unidadeMedida.sigla && (
+              <span className="text-xs text-muted-foreground">{item.unidadeMedida.nome}</span>
+            )}
+          </span>
         ),
       },
       {
@@ -72,7 +74,7 @@ export function MaterialTable({
               size="sm"
               onClick={() => onView(item)}
               title="Visualizar detalhes do material"
-              className="h-8 w-8 p-0 text-[var(--muted-foreground)] hover:text-[var(--brand-blue)] hover:bg-[var(--brand-blue)]/10"
+              className="h-8 w-8 p-0 text-muted-foreground hover:text-info hover:bg-info/10"
               aria-label="Visualizar material"
             >
               <Eye className="h-4 w-4" />
@@ -85,7 +87,7 @@ export function MaterialTable({
                 size="sm"
                 onClick={() => onEdit(item)}
                 title="Editar material"
-                className="h-8 w-8 p-0 text-[var(--muted-foreground)] hover:text-[var(--brand-purple)] hover:bg-[var(--brand-purple)]/10"
+                className="h-8 w-8 p-0 text-muted-foreground hover:text-primary hover:bg-primary/10"
                 aria-label="Editar material"
               >
                 <Edit2 className="h-4 w-4" />
@@ -99,7 +101,7 @@ export function MaterialTable({
                 size="sm"
                 onClick={() => onDelete(item)}
                 title="Excluir material"
-                className="h-8 w-8 p-0 text-[var(--muted-foreground)] hover:text-red-500 hover:bg-red-500/10"
+                className="h-8 w-8 p-0 text-muted-foreground hover:text-danger hover:bg-danger/10"
                 aria-label="Excluir material"
               >
                 <Trash2 className="h-4 w-4" />

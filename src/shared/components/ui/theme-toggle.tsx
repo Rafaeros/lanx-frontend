@@ -15,9 +15,9 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label="Alternar tema"
     >
       {resolvedTheme === "dark" ? (
-        <Sun className="h-5 w-5 text-amber-400 transition-transform hover:rotate-45" />
+        <Sun className="h-[18px] w-[18px] text-warning" />
       ) : (
-        <Moon className="h-5 w-5 text-slate-700 transition-transform hover:-rotate-12" />
+        <Moon className="h-[18px] w-[18px] text-muted-foreground" />
       )}
     </Button>
   );

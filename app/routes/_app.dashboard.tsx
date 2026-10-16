@@ -1,10 +1,9 @@
-import { redirect } from "react-router";
+import { AppHomePage } from "@/features/navigation";
 
-export function clientLoader() {
-  return redirect("/cadastros/materiais");
+export function meta() {
+  return [{ title: "Início - LANX" }];
 }
 
-export default function DashboardIndex() {
-  return null;
+export default function AppHomeRoute() {
+  return <AppHomePage />;
 }
-

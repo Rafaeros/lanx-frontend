@@ -12,21 +12,16 @@ export interface ButtonProps
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", isLoading, children, disabled, ...props }, ref) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none";
+      "inline-flex items-center justify-center font-medium rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none";
 
     const variantStyles = {
-      primary:
-        "bg-[#7609e8] text-white hover:bg-[#6407c7] focus:ring-[#7609e8] shadow-sm",
+      primary: "bg-primary text-primary-foreground hover:bg-primary-hover shadow-sm",
       gradient:
-        "bg-gradient-to-r from-[var(--brand-purple)] to-[var(--brand-blue)] text-white hover:opacity-95 shadow-md hover:shadow-lg focus:ring-[var(--brand-purple)]",
-      secondary:
-        "bg-[var(--muted)] text-[var(--foreground)] hover:bg-[var(--muted)]/80 border border-[var(--card-border)]",
-      outline:
-        "bg-transparent border border-[var(--card-border)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:ring-[var(--brand-purple)]",
-      ghost:
-        "bg-transparent text-[var(--foreground)] hover:bg-[var(--muted)] focus:ring-[var(--card-border)]",
-      danger:
-        "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm",
+        "bg-gradient-to-r from-brand-purple to-brand-blue text-white hover:opacity-95 shadow-sm hover:shadow-md",
+      secondary: "bg-muted text-foreground hover:bg-muted/80 border border-border",
+      outline: "bg-card border border-border text-foreground hover:bg-muted",
+      ghost: "bg-transparent text-foreground hover:bg-muted",
+      danger: "bg-danger text-white hover:opacity-90 shadow-sm",
     };
 
     const sizeStyles = {

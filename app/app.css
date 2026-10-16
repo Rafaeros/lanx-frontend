@@ -1,72 +1,166 @@
 @import "tailwindcss";
 
-/* 1. Definição do Tema CLARO (Padrão/Default) */
+/* O tema escuro é controlado pela classe .dark no <html> (ThemeProvider), não pela preferência do SO */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* 1. Tema CLARO (padrão) */
 :root {
-  /* Branding (Cores da Marca - Fixas) */
+  /* Marca (fixas) */
   --brand-purple: #7609e8;
   --brand-blue: #316ef3;
 
-  /* Cores Base - LIGHT MODE (Clean / Branco) */
-  --background: #f9f3ff;         /* Fundo branco puro com suave toque de lilás */
-  --foreground: #0f172a;         /* Texto escuro (Slate 900) - melhor que preto puro */
-  
-  /* Cards e Elementos de UI */
-  --card-bg: #ffffff;            /* Card branco */
-  --card-border: #e2e8f0;        /* Borda cinza suave (Slate 200) */
-  --muted: #f1f5f9;              /* Cinza bem claro para fundos secundários */
-  --muted-foreground: #64748b;   /* Texto secundário (Slate 500) */
+  /* Base */
+  --background: #f6f4fa;
+  --foreground: #14121f;
 
-  /* Padrão do Grid (Bolinhas) */
-  --grid-color: rgba(0, 0, 0, 0.05); /* Bolinhas pretas bem suaves */
+  /* Superfícies */
+  --card-bg: #ffffff;
+  --card-border: #e5e2ee;
+  --muted: #f0eef6;
+  --muted-foreground: #625e75;
 
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  /* Ações */
+  --primary: var(--brand-purple);
+  --primary-hover: #6407c7;
+  --primary-foreground: #ffffff;
+  --ring: var(--brand-purple);
+
+  /* Sidebar */
+  --sidebar-bg: #ffffff;
+  --sidebar-active: #f3ebfe;
+
+  /* Estados semânticos */
+  --success: #047857;
+  --warning: #b45309;
+  --danger: #dc2626;
+  --info: var(--brand-blue);
+
+  /* Cor de cada módulo (ícones, seletor, nome na sidebar) */
+  --module-compras: #7609e8;
+  --module-producao: #ea580c;
+  --module-comercial: #2563eb;
+  --module-estoque: #0891b2;
+  --module-financeiro: #16a34a;
+  --module-administracao: #db2777;
+
+  /* Padrão do grid (pontos) */
+  --grid-color: rgba(20, 18, 31, 0.06);
+
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Space Grotesk", var(--font-sans);
 }
 
-/* 2. Definição do Tema ESCURO (Dark Mode) */
-/* Quando a classe .dark é adicionada no <html> ou <body> */
+/* 2. Tema ESCURO */
 .dark {
-  /* Cores Base - DARK MODE (Industrial / Tech) */
-  --background: #0f111a;         /* Fundo azul-escuro profundo */
-  --foreground: #ffffff;         /* Texto branco */
+  --background: #0e0f17;
+  --foreground: #f4f3f8;
 
-  /* Cards e Elementos de UI */
-  --card-bg: #161b22;            /* Card cinza/azul escuro */
-  --card-border: #1f2937;        /* Borda escura */
-  --muted: #0d1117;              /* Fundo secundário escuro */
-  --muted-foreground: #94a3b8;   /* Texto secundário cinza claro */
+  --card-bg: #161722;
+  --card-border: #262838;
+  --muted: #1c1d2a;
+  --muted-foreground: #9a98ad;
 
-  /* Padrão do Grid (Bolinhas) */
-  --grid-color: rgba(255, 255, 255, 0.05); /* Bolinhas brancas suaves */
+  --primary: #9b4dff;
+  --primary-hover: #8a33fb;
+  --primary-foreground: #ffffff;
+  --ring: #9b4dff;
+
+  --sidebar-bg: #12131c;
+  --sidebar-active: #241a3a;
+
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --info: #6b9bff;
+
+  --module-compras: #a66bff;
+  --module-producao: #fb923c;
+  --module-comercial: #60a5fa;
+  --module-estoque: #22d3ee;
+  --module-financeiro: #4ade80;
+  --module-administracao: #f472b6;
+
+  --grid-color: rgba(255, 255, 255, 0.05);
 }
 
-/* 3. Mapeamento para o Tailwind v4 */
+/* 3. Mapeamento para o Tailwind v4 (bg-primary, text-muted-foreground, border-border, ...) */
 @theme inline {
   --color-brand-purple: var(--brand-purple);
   --color-brand-blue: var(--brand-blue);
-  
-  /* Mapeamos as variáveis semânticas */
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card-bg);
   --color-border: var(--card-border);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar-bg);
+  --color-sidebar-active: var(--sidebar-active);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+
   --background-image-brand-gradient: linear-gradient(to right, var(--brand-purple), var(--brand-blue));
 }
 
-/* 4. Estilos Globais */
+/* 4. Estilos globais */
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
   min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave ao trocar tema */
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Classe utilitária para o Grid de fundo */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
 .bg-grid {
-  /* Usa a variável --grid-color que muda sozinha entre light/dark */
   background-image: radial-gradient(circle at 1px 1px, var(--grid-color) 1px, transparent 0);
   background-size: 24px 24px;
+}
+
+/* Acento por módulo: o componente define --accent (ex.: var(--module-compras)) */
+.accent-icon {
+  background-color: color-mix(in srgb, var(--accent) 13%, transparent);
+  color: var(--accent);
+}
+
+.accent-text {
+  color: var(--accent);
+}
+
+.accent-surface {
+  background-color: color-mix(in srgb, var(--accent) 8%, var(--card-bg));
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 160ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

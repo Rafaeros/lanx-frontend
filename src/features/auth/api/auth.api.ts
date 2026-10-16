@@ -7,24 +7,7 @@ import type {
   UserResponse,
 } from "@/shared/api/schema";
 import { env } from "@/config/env";
-
-function decodeJwtPayload(token: string): { sub?: string; username?: string; exp?: number } | null {
-  try {
-    const parts = token.split(".");
-    if (parts.length < 2) return null;
-    const base64Url = parts[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split("")
-        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-        .join("")
-    );
-    return JSON.parse(jsonPayload);
-  } catch {
-    return null;
-  }
-}
+import { decodeJwtPayload } from "../lib/jwt";
 
 const MOCK_NAVIGATION: NavigationNode[] = [
   {
@@ -128,41 +111,26 @@ export const authApi = {
 
     const payload = decodeJwtPayload(token);
     const userId = payload?.sub;
-    const username = payload?.username || localStorage.getItem("lanx_mock_username") || "admin";
+    const username = payload?.username || localStorage.getItem("lanx_mock_username") || "Usuário";
 
-    if (userId) {
-      try {
-        const response = await apiClient.get<ApiResponse<UserResponse>>(`/auth/users/${userId}`);
-        return response.data.data;
-      } catch (err) {
-        // Se a chamada ao ID falhar ou token mock, devolve objeto usuário a partir das claims do JWT
-        return {
-          id: userId,
-          username,
-          active: true,
-          roles: [{ id: "1", name: "ADMIN" }],
-          permissions: [
-            "cadastros:read",
-            "cadastros.materiais:read",
-            "cadastros.materiais:create",
-            "cadastros.materiais:update",
-            "cadastros.materiais:delete",
-            "cadastros.unidade-medida:read",
-            "compras:read",
-            "compras.analise-pedidos:read",
-            "compras.analise-pedidos:importar",
-          ],
-        };
-      }
-    }
-
-    return {
-      id: "anonymous",
+    // /auth/users/{id} exige administracao.usuarios:read; para os demais usuários o perfil
+    // é montado a partir das claims do JWT e as permissões vêm da árvore de navegação (useCan).
+    const fromClaims: UserResponse = {
+      id: userId ?? "anonymous",
       username,
       active: true,
-      roles: [{ id: "1", name: "Usuário" }],
+      roles: [],
       permissions: [],
     };
+
+    if (!userId) return fromClaims;
+
+    try {
+      const response = await apiClient.get<ApiResponse<UserResponse>>(`/auth/users/${userId}`);
+      return response.data.data;
+    } catch {
+      return fromClaims;
+    }
   },
 
   logout: () => {

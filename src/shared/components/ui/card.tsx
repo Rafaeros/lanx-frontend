@@ -8,7 +8,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] text-[var(--foreground)] shadow-xs transition-colors",
+        "rounded-xl border border-border bg-card text-foreground shadow-xs transition-colors",
         className
       )}
       {...props}
@@ -46,7 +46,7 @@ export function CardDescription({
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
-      className={cn("text-sm text-[var(--muted-foreground)]", className)}
+      className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
   );

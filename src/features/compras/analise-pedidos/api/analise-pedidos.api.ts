@@ -2,10 +2,14 @@ import apiClient from "@/shared/api/client";
 import type {
   ApiResponse,
   AnalisePedidoResponse,
-  ImportarAnalisePedidoRequest,
+  AnalisePedidosFiltro,
   ImportarAnalisePedidoResponse,
+  PageResult,
+  ResumoAnalisePedidosResponse,
 } from "@/shared/api/schema";
 import { env } from "@/config/env";
+import { paginate } from "@/shared/lib/pagination";
+import { situacaoDe } from "../lib/situacao";
 
 const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
   {
@@ -116,28 +120,77 @@ const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
   },
 ];
 
+function filtrarMock(filtro: AnalisePedidosFiltro): AnalisePedidoResponse[] {
+  const busca = (filtro.busca ?? "").trim().toLowerCase();
+  return MOCK_PEDIDOS.filter((p) => {
+    const emissao = p.dataEmissaoPc ?? "";
+    if (emissao < filtro.dataInicio || emissao > filtro.dataFim) return false;
+    if (filtro.situacao && situacaoDe(p) !== filtro.situacao) return false;
+    if (!busca) return true;
+    return [p.pedidoDeCompra, p.requisicaoDeCompra, p.fornecedor, p.codigoItem, p.descricaoItem].some((v) =>
+      (v ?? "").toLowerCase().includes(busca)
+    );
+  });
+}
+
+/** Remove filtros vazios para não mandar `busca=&situacao=` na URL. */
+function params(filtro: AnalisePedidosFiltro) {
+  return {
+    dataInicio: filtro.dataInicio,
+    dataFim: filtro.dataFim,
+    ...(filtro.busca?.trim() ? { busca: filtro.busca.trim() } : {}),
+    ...(filtro.situacao ? { situacao: filtro.situacao } : {}),
+  };
+}
+
 export const analisePedidosApi = {
+  /** GET /compras/relatorios/analise-pedidos: itens paginados, ordenados por emissão do PC. */
   consultar: async (
-    filtro: ImportarAnalisePedidoRequest = {}
-  ): Promise<AnalisePedidoResponse[]> => {
+    filtro: AnalisePedidosFiltro,
+    page = 0,
+    size = 20
+  ): Promise<PageResult<AnalisePedidoResponse>> => {
     try {
-      const response = await apiClient.get<ApiResponse<AnalisePedidoResponse[]>>(
+      const response = await apiClient.get<ApiResponse<PageResult<AnalisePedidoResponse>>>(
         "/compras/relatorios/analise-pedidos",
-        { params: filtro }
+        { params: { ...params(filtro), page, size } }
+      );
+      return response.data.data;
+    } catch (error) {
+      if (env.VITE_ENABLE_MOCK_FALLBACK) return paginate(filtrarMock(filtro), page, size);
+      throw error;
+    }
+  },
+
+  /** GET /compras/relatorios/analise-pedidos/resumo: totais de tudo que atende aos filtros. */
+  resumo: async (filtro: AnalisePedidosFiltro): Promise<ResumoAnalisePedidosResponse> => {
+    try {
+      const response = await apiClient.get<ApiResponse<ResumoAnalisePedidosResponse>>(
+        "/compras/relatorios/analise-pedidos/resumo",
+        { params: params(filtro) }
       );
       return response.data.data;
     } catch (error) {
       if (env.VITE_ENABLE_MOCK_FALLBACK) {
-        return MOCK_PEDIDOS;
+        const itens = filtrarMock(filtro);
+        const leadTimes = itens.map((i) => i.leadTimeDias).filter((v): v is number => v != null);
+        return {
+          totalItens: itens.length,
+          valorTotal: itens.reduce((acc, i) => acc + (i.valorTotal ?? 0), 0),
+          pendentes: itens.filter((i) => situacaoDe(i) === "PENDENTE").length,
+          parciais: itens.filter((i) => situacaoDe(i) === "PARCIAL").length,
+          atendidos: itens.filter((i) => situacaoDe(i) === "ATENDIDO").length,
+          leadTimeMedioDias: leadTimes.length
+            ? Math.round(leadTimes.reduce((a, b) => a + b, 0) / leadTimes.length)
+            : null,
+        };
       }
       throw error;
     }
   },
 
-  importar: async (
-    dataInicio: string,
-    dataFim: string
-  ): Promise<ImportarAnalisePedidoResponse> => {
+  /** POST .../importar: substitui os itens do período pelos do ERP. */
+  importar: async (dataInicio: string, dataFim: string): Promise<ImportarAnalisePedidoResponse> => {
     try {
       const response = await apiClient.post<ApiResponse<ImportarAnalisePedidoResponse>>(
         "/compras/relatorios/analise-pedidos/importar",
@@ -146,11 +199,8 @@ export const analisePedidosApi = {
       );
       return response.data.data;
     } catch (error) {
-      if (env.VITE_ENABLE_MOCK_FALLBACK) {
-        return { itensImportados: 14 };
-      }
+      if (env.VITE_ENABLE_MOCK_FALLBACK) return { itensImportados: MOCK_PEDIDOS.length };
       throw error;
     }
   },
 };
-

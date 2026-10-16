@@ -3,5 +3,8 @@ export * from "./input";
 export * from "./card";
 export * from "./badge";
 export * from "./dialog";
+export * from "./confirm-dialog";
 export * from "./theme-toggle";
-
+export * from "./toast";
+export * from "./page-header";
+export * from "./brand-logo";

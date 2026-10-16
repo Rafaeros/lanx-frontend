@@ -21,23 +21,16 @@ export interface UnidadeMedidaSummaryResponse {
   sigla: string;
 }
 
-export interface UnidadeMedidaResponse {
-  id: string;
+export type UnidadeMedidaResponse = UnidadeMedidaSummaryResponse;
+
+/** Corpo de POST e PUT em /unidade-medida (o backend aceita apenas nome e sigla). */
+export interface UnidadeMedidaRequest {
   nome: string;
   sigla: string;
-  descricao?: string;
 }
 
-export interface CreateUnidadeMedidaRequest {
-  nome: string;
-  sigla: string;
-  descricao?: string;
-}
-
-export interface UpdateUnidadeMedidaRequest {
-  nome: string;
-  sigla: string;
-  descricao?: string;
+export interface UnidadeMedidaFilter {
+  busca?: string;
 }
 
 // --- Cadastros: Materiais ---
@@ -86,8 +79,10 @@ export interface AnalisePedidoResponse {
   quantidadeSolicitada?: number;
   quantidadeAtendida?: number;
   saldo?: number;
-  leadTimeDias?: number;
+  /** Dias entre emissão do PC e entrega; null enquanto não entregue. */
+  leadTimeDias?: number | null;
   atendimentoParcial?: boolean;
+  situacao?: SituacaoPedido;
   local?: string;
   valorUnitario?: number;
   valorFrete?: number;
@@ -105,12 +100,65 @@ export interface AnalisePedidoResponse {
   observacao?: string;
 }
 
-export interface ImportarAnalisePedidoRequest {
-  dataInicio?: string;
-  dataFim?: string;
+export type SituacaoPedido = "PENDENTE" | "PARCIAL" | "ATENDIDO";
+
+/** Filtros de GET /compras/relatorios/analise-pedidos e /resumo. */
+export interface AnalisePedidosFiltro {
+  dataInicio: string;
+  dataFim: string;
+  busca?: string;
+  situacao?: SituacaoPedido | "";
+}
+
+export interface ResumoAnalisePedidosResponse {
+  totalItens: number;
+  valorTotal: number;
+  pendentes: number;
+  parciais: number;
+  atendidos: number;
+  leadTimeMedioDias: number | null;
 }
 
 export interface ImportarAnalisePedidoResponse {
   itensImportados: number;
 }
 
+
+// --- Administração: Usuários, Perfis e Permissões ---
+export interface RoleResponse {
+  id: string;
+  name: string;
+  description?: string | null;
+  permissions: string[];
+}
+
+/** Corpo de POST e PUT em /auth/roles. `permissions` são códigos "feature:action". */
+export interface RoleRequest {
+  name: string;
+  description?: string;
+  permissions: string[];
+}
+
+export interface PermissionItem {
+  code: string;
+  action: string;
+}
+
+/** Nó do catálogo (GET /auth/features): o que pode ser concedido às roles. */
+export interface FeatureNode {
+  key: string;
+  label: string;
+  permissions: PermissionItem[];
+  children: FeatureNode[];
+}
+
+export interface RegisterUserRequest {
+  username: string;
+  password: string;
+  roleIds: string[];
+}
+
+export interface UpdateUserRequest {
+  roleIds: string[];
+  active: boolean;
+}

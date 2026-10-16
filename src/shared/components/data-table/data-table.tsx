@@ -28,6 +28,8 @@ export interface DataTableProps<T> {
   onSizeChange?: (size: number) => void;
   emptyMessage?: string;
   className?: string;
+  /** Chave da linha; padrão: `id` do item ou o índice. */
+  getRowKey?: (item: T, index: number) => React.Key;
 }
 
 export function DataTable<T>({
@@ -38,6 +40,7 @@ export function DataTable<T>({
   onSizeChange,
   emptyMessage = "Nenhum registro encontrado.",
   className,
+  getRowKey,
 }: DataTableProps<T>) {
   const items = data?.items || [];
   const totalElements = data?.totalElements ?? items.length;
@@ -79,10 +82,10 @@ export function DataTable<T>({
   return (
     <div className={cn("w-full space-y-4", className)}>
       {/* Tabela com scroll horizontal responsivo e 100% de ocupação */}
-      <div className="w-full overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] shadow-xs">
+      <div className="w-full overflow-hidden rounded-xl border border-border bg-card shadow-xs">
         <div className="w-full overflow-x-auto">
           <table className="w-full min-w-full text-left text-sm border-collapse">
-            <thead className="border-b border-[var(--card-border)] bg-[var(--muted)]/60 text-xs uppercase font-semibold text-[var(--muted-foreground)] tracking-wider">
+            <thead className="border-b border-border bg-muted/60 text-xs font-semibold text-muted-foreground">
               <tr>
                 {columns.map((col) => (
                   <th
@@ -90,7 +93,7 @@ export function DataTable<T>({
                     scope="col"
                     style={{ width: col.width }}
                     className={cn(
-                      "px-5 py-4 whitespace-nowrap",
+                      "px-4 py-3.5 whitespace-nowrap",
                       col.align === "center" && "text-center",
                       col.align === "right" && "text-right",
                       col.className
@@ -101,20 +104,20 @@ export function DataTable<T>({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--card-border)] bg-[var(--card-bg)]">
+            <tbody className="divide-y divide-border bg-card">
               {isLoading ? (
                 <tr>
                   <td colSpan={columns.length} className="h-56 text-center">
-                    <div className="flex flex-col items-center justify-center gap-3 text-[var(--muted-foreground)]">
-                      <Loader2 className="h-8 w-8 animate-spin text-[var(--brand-purple)]" />
-                      <span className="text-sm font-medium">Carregando dados da API...</span>
+                    <div className="flex flex-col items-center justify-center gap-3 text-muted-foreground">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      <span className="text-sm font-medium">Carregando...</span>
                     </div>
                   </td>
                 </tr>
               ) : items.length === 0 ? (
                 <tr>
                   <td colSpan={columns.length} className="h-56 text-center">
-                    <div className="flex flex-col items-center justify-center gap-3 text-[var(--muted-foreground)]">
+                    <div className="flex flex-col items-center justify-center gap-3 text-muted-foreground">
                       <Inbox className="h-10 w-10 stroke-[1.5]" />
                       <p className="text-sm font-medium">{emptyMessage}</p>
                     </div>
@@ -123,14 +126,14 @@ export function DataTable<T>({
               ) : (
                 items.map((row, idx) => (
                   <tr
-                    key={(row as any).id || idx}
-                    className="hover:bg-[var(--muted)]/50 transition-colors group"
+                    key={getRowKey ? getRowKey(row, idx) : ((row as { id?: React.Key }).id ?? idx)}
+                    className="hover:bg-muted/50 transition-colors group"
                   >
                     {columns.map((col) => (
                       <td
                         key={col.key}
                         className={cn(
-                          "px-5 py-3.5 text-sm text-[var(--foreground)]",
+                          "px-4 py-3 text-sm text-foreground",
                           col.align === "center" && "text-center",
                           col.align === "right" && "text-right",
                           col.className
@@ -149,22 +152,22 @@ export function DataTable<T>({
 
       {/* Barra de Paginação Completa e Responsiva */}
       {data && (
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-2 px-1 text-sm text-[var(--muted-foreground)]">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-2 px-1 text-sm text-muted-foreground">
           {/* Contador e Seletor de Tamanho */}
           <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
             <span>
-              Exibindo <strong className="text-[var(--foreground)]">{startRecord}</strong> a{" "}
-              <strong className="text-[var(--foreground)]">{endRecord}</strong> de{" "}
-              <strong className="text-[var(--foreground)]">{totalElements}</strong> registros
+              Exibindo <strong className="text-foreground">{startRecord}</strong> a{" "}
+              <strong className="text-foreground">{endRecord}</strong> de{" "}
+              <strong className="text-foreground">{totalElements}</strong> registros
             </span>
 
             {onSizeChange && (
-              <div className="flex items-center gap-1.5 ml-2 border-l border-[var(--card-border)] pl-3">
+              <div className="flex items-center gap-1.5 ml-2 border-l border-border pl-3">
                 <span className="text-xs">Por página:</span>
                 <select
                   value={pageSize}
                   onChange={(e) => onSizeChange(Number(e.target.value))}
-                  className="rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-2.5 py-1 text-xs font-medium text-[var(--foreground)] focus:ring-2 focus:ring-[var(--brand-purple)] focus:outline-none cursor-pointer"
+                  className="rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground focus:ring-2 focus:ring-ring focus:outline-none cursor-pointer"
                 >
                   <option value={10}>10</option>
                   <option value={20}>20</option>
@@ -208,7 +211,7 @@ export function DataTable<T>({
               {pageNumbers.map((p, idx) => {
                 if (typeof p === "string") {
                   return (
-                    <span key={`dots-${idx}`} className="px-2 text-xs text-[var(--muted-foreground)]">
+                    <span key={`dots-${idx}`} className="px-2 text-xs text-muted-foreground">
                       ...
                     </span>
                   );
@@ -218,7 +221,7 @@ export function DataTable<T>({
                 return (
                   <Button
                     key={p}
-                    variant={isCurrent ? "gradient" : "outline"}
+                    variant={isCurrent ? "primary" : "outline"}
                     size="sm"
                     onClick={() => onPageChange?.(p)}
                     disabled={isLoading}

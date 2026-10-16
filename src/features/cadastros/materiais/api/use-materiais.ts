@@ -29,7 +29,7 @@ export function useMaterialQuery(id: string | null) {
 
 export function useUnidadesMedidaQuery() {
   return useQuery({
-    queryKey: ["unidadesMedida"],
+    queryKey: ["unidadesMedida", "all"],
     queryFn: () => unidadeMedidaApi.findAll(),
   });
 }
