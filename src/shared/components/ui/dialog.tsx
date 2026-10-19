@@ -9,7 +9,12 @@ export interface DialogProps {
   description?: string;
   children: React.ReactNode;
   className?: string;
-  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "4xl";
+  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "4xl" | "5xl" | "6xl";
+  /**
+   * Limita a altura do diálogo à viewport e transforma o corpo em coluna flex (min-h-0).
+   * O conteúdo decide o que rola — ex.: área central com overflow-y-auto e rodapé fixo.
+   */
+  scrollable?: boolean;
 }
 
 export function Dialog({
@@ -20,7 +25,11 @@ export function Dialog({
   children,
   className,
   maxWidth = "lg",
+  scrollable = false,
 }: DialogProps) {
+  const titleId = React.useId();
+  const descriptionId = React.useId();
+
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && open) {
@@ -46,6 +55,8 @@ export function Dialog({
     xl: "max-w-xl",
     "2xl": "max-w-2xl",
     "4xl": "max-w-4xl",
+    "5xl": "max-w-5xl",
+    "6xl": "max-w-6xl",
   };
 
   return (
@@ -61,8 +72,11 @@ export function Dialog({
       <div
         role="dialog"
         aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
+        aria-describedby={description ? descriptionId : undefined}
         className={cn(
           "relative w-full rounded-2xl bg-card border border-border p-6 shadow-2xl transition-all z-10",
+          scrollable && "flex max-h-[calc(100dvh-2rem)] flex-col sm:max-h-[calc(100dvh-3rem)]",
           maxWidths[maxWidth],
           className
         )}
@@ -77,21 +91,21 @@ export function Dialog({
         </button>
 
         {(title || description) && (
-          <div className="mb-5 pr-8">
+          <div className={cn("mb-5 pr-8", scrollable && "shrink-0")}>
             {title && (
-              <h2 className="text-xl font-semibold tracking-tight text-foreground">
+              <h2 id={titleId} className="text-xl font-semibold tracking-tight text-foreground">
                 {title}
               </h2>
             )}
             {description && (
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p id={descriptionId} className="mt-1 text-sm text-muted-foreground">
                 {description}
               </p>
             )}
           </div>
         )}
 
-        <div>{children}</div>
+        <div className={cn(scrollable && "flex min-h-0 flex-1 flex-col")}>{children}</div>
       </div>
     </div>
   );

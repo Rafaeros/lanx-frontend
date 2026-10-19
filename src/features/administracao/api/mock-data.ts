@@ -1,11 +1,13 @@
 import type { FeatureNode, RoleResponse, UserResponse } from "@/shared/api/schema";
 
 /** Dados de desenvolvimento usados só quando VITE_ENABLE_MOCK_FALLBACK está ligado. */
-const crud = (key: string, extras: string[] = []) =>
-  ["read", "create", "update", "delete", ...extras].map((action) => ({
-    code: `${key}:${action}`,
-    action,
-  }));
+const perms = (key: string, actions: string[]) => actions.map((action) => ({ code: `${key}:${action}`, action }));
+
+/** Cadastros/admin e módulos raiz: CRUD completo. */
+const crud = (key: string) => perms(key, ["read", "create", "update", "delete"]);
+
+/** Relatórios: somente leitura + ações específicas (importar, exportar…). */
+const report = (key: string, extras: string[]) => perms(key, ["read", ...extras]);
 
 export const MOCK_FEATURES: FeatureNode[] = [
   {
@@ -24,6 +26,8 @@ export const MOCK_FEATURES: FeatureNode[] = [
     children: [
       { key: "cadastros.unidade-medida", label: "Unidades de Medida", permissions: crud("cadastros.unidade-medida"), children: [] },
       { key: "cadastros.materiais", label: "Materiais", permissions: crud("cadastros.materiais"), children: [] },
+      { key: "cadastros.fornecedores", label: "Fornecedores", permissions: crud("cadastros.fornecedores"), children: [] },
+      { key: "cadastros.pais", label: "Países", permissions: crud("cadastros.pais"), children: [] },
     ],
   },
   {
@@ -34,9 +38,10 @@ export const MOCK_FEATURES: FeatureNode[] = [
       {
         key: "compras.analise-pedidos",
         label: "Análise de Pedidos",
-        permissions: crud("compras.analise-pedidos", ["importar"]),
+        permissions: report("compras.analise-pedidos", ["exportar", "importar"]),
         children: [],
       },
+      { key: "compras.iqf", label: "IQF de Fornecedores", permissions: report("compras.iqf", ["exportar"]), children: [] },
     ],
   },
 ];

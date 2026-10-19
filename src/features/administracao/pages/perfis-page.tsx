@@ -119,7 +119,7 @@ export function PerfisPage() {
         onOpen={openRole}
       />
 
-      <Dialog open={!!dialog} onClose={close} title={title} description={description} maxWidth="2xl">
+      <Dialog open={!!dialog} onClose={close} title={title} description={description} maxWidth="5xl" scrollable>
         {dialog && (
           <PerfilForm
             key={dialog.mode === "create" ? "new" : dialog.role.id}
