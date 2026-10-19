@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ChartColumn, Download, RefreshCw } from "lucide-react";
+import { ChartColumn, Download, FileSpreadsheet, RefreshCw } from "lucide-react";
 import { useDebounce } from "@/shared/hooks/use-debounce";
 import { usePagination } from "@/shared/hooks/use-pagination";
 import { getApiErrorMessage } from "@/shared/lib/api-error";
@@ -10,6 +10,7 @@ import { PermissionGate } from "@/features/auth/components/permission-gate";
 import type { AnalisePedidoResponse, AnalisePedidosFiltro } from "@/shared/api/schema";
 import {
   useAnalisePedidosQuery,
+  useExportarPedidosMutation,
   useImportarPedidosMutation,
   useResumoAnalisePedidosQuery,
 } from "../hooks/use-analise-pedidos";
@@ -40,6 +41,13 @@ export function AnalisePedidosPage() {
   const itens = useAnalisePedidosQuery(filtro, page, size, !periodoInvalido);
   const resumo = useResumoAnalisePedidosQuery(filtro, !periodoInvalido);
   const importar = useImportarPedidosMutation();
+  const exportar = useExportarPedidosMutation();
+
+  const handleExport = () =>
+    exportar.mutate(filtro, {
+      onSuccess: () => toast.success("Planilha gerada", "O download da análise de pedidos começou."),
+      onError: (err) => toast.error("Não foi possível exportar", getApiErrorMessage(err, "Tente novamente.")),
+    });
 
   const [importOpen, setImportOpen] = React.useState(false);
   const [detalhe, setDetalhe] = React.useState<AnalisePedidoResponse | null>(null);
@@ -86,6 +94,21 @@ export function AnalisePedidosPage() {
               <RefreshCw className={`h-4 w-4 ${itens.isFetching ? "animate-spin" : ""}`} />
               <span className="hidden sm:inline">Atualizar</span>
             </Button>
+            <PermissionGate permission="compras.analise-pedidos:exportar">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExport}
+                isLoading={exportar.isPending}
+                disabled={periodoInvalido || itens.isError || (itens.data?.totalElements ?? 0) === 0}
+                className="h-9"
+                title="Baixar planilha Excel com todos os itens dos filtros atuais"
+              >
+                {!exportar.isPending && <FileSpreadsheet className="h-4 w-4 text-success" />}
+                <span className="hidden sm:inline">Exportar planilha</span>
+                <span className="sm:hidden">Exportar</span>
+              </Button>
+            </PermissionGate>
             <PermissionGate permission="compras.analise-pedidos:importar">
               <Button variant="primary" size="sm" onClick={() => setImportOpen(true)} className="h-9">
                 <Download className="h-4 w-4" />

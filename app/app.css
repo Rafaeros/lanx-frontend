@@ -164,3 +164,41 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* 5. Relatórios para impressão / "Salvar como PDF": só o #print-root aparece, sempre no tema claro */
+#print-root {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  body > *:not(#print-root) {
+    display: none !important;
+  }
+
+  #print-root {
+    display: block;
+    --background: #ffffff;
+    --foreground: #14121f;
+    --card-bg: #ffffff;
+    --card-border: #e5e2ee;
+    --muted: #f0eef6;
+    --muted-foreground: #625e75;
+    --primary: #7609e8;
+    --success: #047857;
+    --warning: #b45309;
+    --danger: #dc2626;
+    color: var(--foreground);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

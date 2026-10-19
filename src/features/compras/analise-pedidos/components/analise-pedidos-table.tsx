@@ -55,7 +55,7 @@ export function AnalisePedidosTable({
         header: "Fornecedor",
         cell: (p) => (
           <div className="max-w-[14rem]">
-            <div className="font-medium text-foreground">{p.fornecedor || "-"}</div>
+            <div className="font-medium text-foreground">{p.fornecedor?.nome || "-"}</div>
             <div className="text-xs text-muted-foreground">{p.comprador}</div>
           </div>
         ),
@@ -65,9 +65,9 @@ export function AnalisePedidosTable({
         header: "Item",
         cell: (p) => (
           <div>
-            <div className="font-mono text-xs text-primary">{p.codigoItem}</div>
-            <div className="max-w-[15rem] truncate text-xs text-muted-foreground" title={p.descricaoItem}>
-              {p.descricaoItem}
+            <div className="font-mono text-xs text-primary">{p.material?.codigo}</div>
+            <div className="max-w-[15rem] truncate text-xs text-muted-foreground" title={p.material?.descricao}>
+              {p.material?.descricao}
             </div>
           </div>
         ),
@@ -80,7 +80,7 @@ export function AnalisePedidosTable({
         cell: (p) => (
           <span className="tabular-nums">
             {formatNumber(p.quantidadeAtendida)} / {formatNumber(p.quantidadeSolicitada)}{" "}
-            <span className="text-xs text-muted-foreground">{p.unidadeMedida}</span>
+            <span className="text-xs text-muted-foreground">{p.unidadeMedida?.sigla}</span>
           </span>
         ),
       },
@@ -95,7 +95,7 @@ export function AnalisePedidosTable({
               <Badge variant={SITUACAO_BADGE[situacao]}>{SITUACAO_LABELS[situacao]}</Badge>
               {situacao !== "ATENDIDO" && (p.saldo ?? 0) > 0 && (
                 <span className="whitespace-nowrap text-[11px] text-muted-foreground">
-                  saldo {formatNumber(p.saldo)} {p.unidadeMedida}
+                  saldo {formatNumber(p.saldo)} {p.unidadeMedida?.sigla}
                 </span>
               )}
             </div>
@@ -139,7 +139,7 @@ export function AnalisePedidosTable({
       onPageChange={onPageChange}
       onSizeChange={onSizeChange}
       emptyMessage={emptyMessage}
-      getRowKey={(p, idx) => `${p.pedidoDeCompra}-${p.codigoItem}-${idx}`}
+      getRowKey={(p, idx) => p.id ?? `${p.pedidoDeCompra}-${p.material?.codigo}-${idx}`}
     />
   );
 }

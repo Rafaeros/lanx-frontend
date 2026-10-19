@@ -40,7 +40,7 @@ export function PedidoDetalhesDialog({
       open={!!p}
       onClose={onClose}
       title={`Pedido ${p?.pedidoDeCompra ?? ""}`}
-      description={p ? `${p.codigoItem}: ${p.descricaoItem}` : undefined}
+      description={p?.material ? `${p.material.codigo}: ${p.material.descricao}` : undefined}
       maxWidth="2xl"
     >
       {p && situacao && (
@@ -52,9 +52,9 @@ export function PedidoDetalhesDialog({
           </Grupo>
 
           <Grupo titulo="Pedido e entrega">
-            <Campo label="Fornecedor">{p.fornecedor}</Campo>
+            <Campo label="Fornecedor">{p.fornecedor?.nome}</Campo>
             <Campo label="Comprador">{p.comprador}</Campo>
-            <Campo label="País">{p.pais}</Campo>
+            <Campo label="País">{p.fornecedor?.pais}</Campo>
             <Campo label="Emissão do PC">{formatDateBR(p.dataEmissaoPc)}</Campo>
             <Campo label="Previsão de entrega">{formatDateBR(p.dataPrevisaoEntregaPc)}</Campo>
             <Campo label="Entregue em">{formatDateBR(p.dataEntregaPc)}</Campo>
@@ -62,7 +62,7 @@ export function PedidoDetalhesDialog({
               <Badge variant={SITUACAO_BADGE[situacao]}>{SITUACAO_LABELS[situacao]}</Badge>
             </Campo>
             <Campo label="Atendido / solicitado">
-              {formatNumber(p.quantidadeAtendida)} / {formatNumber(p.quantidadeSolicitada)} {p.unidadeMedida}
+              {formatNumber(p.quantidadeAtendida)} / {formatNumber(p.quantidadeSolicitada)} {p.unidadeMedida?.sigla}
             </Campo>
             <Campo label="Lead time">{p.leadTimeDias != null ? `${p.leadTimeDias} dias` : "-"}</Campo>
             <Campo label="Local">{p.local}</Campo>

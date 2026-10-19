@@ -30,3 +30,7 @@ export function useImportarPedidosMutation() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [KEY] }),
   });
 }
+
+export function useExportarPedidosMutation() {
+  return useMutation({ mutationFn: (filtro: AnalisePedidosFiltro) => analisePedidosApi.exportar(filtro) });
+}

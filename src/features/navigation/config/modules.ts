@@ -1,6 +1,7 @@
 import {
   ChartColumn,
   Factory,
+  Gauge,
   Handshake,
   KeyRound,
   ShieldCheck,
@@ -33,6 +34,13 @@ export const MODULES: ModuleDefinition[] = [
             to: "/compras/analise-pedidos",
             icon: ChartColumn,
             featureKey: "compras.analise-pedidos",
+          },
+          {
+            id: "compras.iqf",
+            label: "IQF de fornecedores",
+            to: "/compras/iqf",
+            icon: Gauge,
+            featureKey: "compras.iqf",
           },
         ],
       },

@@ -1,4 +1,4 @@
-import { Package, Ruler } from "lucide-react";
+import { Package, Ruler, Truck } from "lucide-react";
 import type { NavSection } from "../types";
 
 /** Cadastros compartilhados: aparecem em todos os módulos, sempre como primeira seção. */
@@ -18,6 +18,13 @@ export const SHARED_CADASTROS: NavSection = {
       to: "/cadastros/unidades-medida",
       icon: Ruler,
       featureKey: "cadastros.unidade-medida",
+    },
+    {
+      id: "cadastros.fornecedores",
+      label: "Fornecedores",
+      to: "/cadastros/fornecedores",
+      icon: Truck,
+      featureKey: "cadastros.fornecedores",
     },
   ],
 };

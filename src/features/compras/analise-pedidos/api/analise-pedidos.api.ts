@@ -8,11 +8,13 @@ import type {
   ResumoAnalisePedidosResponse,
 } from "@/shared/api/schema";
 import { env } from "@/config/env";
+import { saveBlobResponse } from "@/shared/lib/download";
 import { paginate } from "@/shared/lib/pagination";
 import { situacaoDe } from "../lib/situacao";
 
 const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
   {
+    id: "mock-item-1",
     requisicaoDeCompra: "RC-2026-0081",
     solicitante: "Carlos Engenharia",
     dataEmissaoRc: "2026-10-01",
@@ -22,11 +24,9 @@ const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
     dataEmissaoPc: "2026-10-03",
     dataPrevisaoEntregaPc: "2026-10-22",
     dataEntregaPc: "2026-10-18",
-    fornecedor: "Aço Tubos Tubulares SA",
-    pais: "Brasil",
-    codigoItem: "MAT-1003",
-    descricaoItem: "Tubo Industrial Schedule 40 3 Metros",
-    unidadeMedida: "M",
+    fornecedor: { id: "mock-fornecedor-1", nome: "Aço Tubos Tubulares SA", pais: "Brasil" },
+    material: { id: "mock-material-1", codigo: "MAT-1003", descricao: "Tubo Industrial Schedule 40 3 Metros" },
+    unidadeMedida: { id: "mock-unidade-m", sigla: "M" },
     quantidadeSolicitada: 150,
     quantidadeAtendida: 150,
     saldo: 0,
@@ -49,6 +49,7 @@ const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
     observacao: "Entregue conforme especificação técnica sem desvios",
   },
   {
+    id: "mock-item-2",
     requisicaoDeCompra: "RC-2026-0094",
     solicitante: "Juliana Operações",
     dataEmissaoRc: "2026-10-05",
@@ -57,11 +58,9 @@ const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
     comprador: "Mariana Silva",
     dataEmissaoPc: "2026-10-06",
     dataPrevisaoEntregaPc: "2026-10-24",
-    fornecedor: "Valvtech Componentes Ltda",
-    pais: "Brasil",
-    codigoItem: "MAT-1001",
-    descricaoItem: "Válvula Esférica Inox 316 2 Polegadas",
-    unidadeMedida: "UN",
+    fornecedor: { id: "mock-fornecedor-2", nome: "Valvtech Componentes Ltda", pais: "Brasil" },
+    material: { id: "mock-material-2", codigo: "MAT-1001", descricao: "Válvula Esférica Inox 316 2 Polegadas" },
+    unidadeMedida: { id: "mock-unidade-un", sigla: "UN" },
     quantidadeSolicitada: 40,
     quantidadeAtendida: 25,
     saldo: 15,
@@ -84,6 +83,7 @@ const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
     observacao: "Entrega restante do saldo prevista para próxima semana",
   },
   {
+    id: "mock-item-3",
     requisicaoDeCompra: "RC-2026-0102",
     solicitante: "Roberto Almoxarifado",
     dataEmissaoRc: "2026-10-08",
@@ -92,11 +92,9 @@ const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
     comprador: "Mariana Silva",
     dataEmissaoPc: "2026-10-10",
     dataPrevisaoEntregaPc: "2026-10-28",
-    fornecedor: "Metalúrgica Gerdau do Brasil",
-    pais: "Brasil",
-    codigoItem: "MAT-1002",
-    descricaoItem: "Chapa de Aço Carbono 1/4x1200x3000mm",
-    unidadeMedida: "KG",
+    fornecedor: { id: "mock-fornecedor-3", nome: "Metalúrgica Gerdau do Brasil", pais: "Brasil" },
+    material: { id: "mock-material-3", codigo: "MAT-1002", descricao: "Chapa de Aço Carbono 1/4x1200x3000mm" },
+    unidadeMedida: { id: "mock-unidade-kg", sigla: "KG" },
     quantidadeSolicitada: 1200,
     quantidadeAtendida: 1200,
     saldo: 0,
@@ -127,7 +125,7 @@ function filtrarMock(filtro: AnalisePedidosFiltro): AnalisePedidoResponse[] {
     if (emissao < filtro.dataInicio || emissao > filtro.dataFim) return false;
     if (filtro.situacao && situacaoDe(p) !== filtro.situacao) return false;
     if (!busca) return true;
-    return [p.pedidoDeCompra, p.requisicaoDeCompra, p.fornecedor, p.codigoItem, p.descricaoItem].some((v) =>
+    return [p.pedidoDeCompra, p.requisicaoDeCompra, p.fornecedor?.nome, p.material?.codigo, p.material?.descricao].some((v) =>
       (v ?? "").toLowerCase().includes(busca)
     );
   });
@@ -189,13 +187,24 @@ export const analisePedidosApi = {
     }
   },
 
+  /** GET .../exportar: planilha (.xlsx) com todos os itens dos filtros, sem paginação. */
+  exportar: async (filtro: AnalisePedidosFiltro): Promise<void> => {
+    const response = await apiClient.get<Blob>("/compras/relatorios/analise-pedidos/exportar", {
+      params: params(filtro),
+      responseType: "blob",
+      timeout: 120000,
+    });
+    saveBlobResponse(response, `analise-pedidos_${filtro.dataInicio}_${filtro.dataFim}.xlsx`);
+  },
+
   /** POST .../importar: substitui os itens do período pelos do ERP. */
   importar: async (dataInicio: string, dataFim: string): Promise<ImportarAnalisePedidoResponse> => {
     try {
       const response = await apiClient.post<ApiResponse<ImportarAnalisePedidoResponse>>(
         "/compras/relatorios/analise-pedidos/importar",
         null,
-        { params: { dataInicio, dataFim } }
+        // o backend busca o ERP mês a mês (~20 s por mês): um semestre passa de 1,5 min
+        { params: { dataInicio, dataFim }, timeout: 15 * 60 * 1000 }
       );
       return response.data.data;
     } catch (error) {
