@@ -41,6 +41,8 @@ export interface UserResponse {
   id: string;
   username: string;
   active: boolean;
+  /** Ainda não trocou a senha provisória. */
+  firstAccess?: boolean;
   roles: RoleSummary[];
   permissions: string[];
 }

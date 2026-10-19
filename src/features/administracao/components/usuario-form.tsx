@@ -64,8 +64,8 @@ export function NovoUsuarioForm({
         <FormInput
           name="password"
           type="password"
-          label="Senha inicial"
-          hint="Mínimo de 8 caracteres, com letras e números."
+          label="Senha provisória"
+          hint="Mínimo de 8 caracteres, com letras e números. No primeiro login o usuário define a própria senha."
           autoComplete="new-password"
           required
           leftIcon={<Lock className="h-4 w-4" />}

@@ -1,6 +1,7 @@
 import apiClient, { tokenStorage } from "@/shared/api/client";
 import type {
   ApiResponse,
+  FirstAccessRequest,
   LoginRequest,
   LoginResponse,
   NavigationNode,
@@ -27,6 +28,18 @@ const MOCK_NAVIGATION: NavigationNode[] = [
         actions: ["read", "create", "update", "delete"],
         children: [],
       },
+      {
+        key: "cadastros.fornecedores",
+        label: "Fornecedores",
+        actions: ["read", "create", "update", "delete"],
+        children: [],
+      },
+      {
+        key: "cadastros.pais",
+        label: "Países",
+        actions: ["read"],
+        children: [],
+      },
     ],
   },
   {
@@ -38,6 +51,12 @@ const MOCK_NAVIGATION: NavigationNode[] = [
         key: "compras.analise-pedidos",
         label: "Análise de Pedidos",
         actions: ["read", "importar"],
+        children: [],
+      },
+      {
+        key: "compras.iqf",
+        label: "IQF de Fornecedores",
+        actions: ["read"],
         children: [],
       },
     ],
@@ -71,7 +90,8 @@ export const authApi = {
         credentials
       );
       const data = response.data.data;
-      tokenStorage.set(data.accessToken);
+      // primeiro acesso não traz token: só depois de definir a senha
+      if (data.accessToken) tokenStorage.set(data.accessToken);
       return data;
     } catch (error) {
       if (env.VITE_ENABLE_MOCK_FALLBACK) {
@@ -80,13 +100,22 @@ export const authApi = {
           accessToken: "mock-jwt-token-lanx-" + Date.now(),
           tokenType: "Bearer",
           expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          firstAccess: false,
         };
-        tokenStorage.set(mockResponse.accessToken);
+        tokenStorage.set(mockResponse.accessToken!);
         localStorage.setItem("lanx_mock_username", credentials.username);
         return mockResponse;
       }
       throw error;
     }
+  },
+
+  /** POST /auth/first-access (público): define a senha do primeiro acesso e já entra. */
+  firstAccess: async (request: FirstAccessRequest): Promise<LoginResponse> => {
+    const response = await apiClient.post<ApiResponse<LoginResponse>>("/auth/first-access", request);
+    const data = response.data.data;
+    if (data.accessToken) tokenStorage.set(data.accessToken);
+    return data;
   },
 
   getNavigation: async (): Promise<NavigationNode[]> => {

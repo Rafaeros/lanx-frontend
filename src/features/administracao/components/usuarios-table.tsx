@@ -45,9 +45,17 @@ export function UsuariosTable({ data, isLoading, onPageChange, onSizeChange, onE
       {
         key: "status",
         header: "Status",
-        width: "120px",
-        cell: (user) =>
-          user.active ? <Badge variant="success">Ativo</Badge> : <Badge variant="secondary">Inativo</Badge>,
+        width: "190px",
+        cell: (user) => (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {user.active ? <Badge variant="success">Ativo</Badge> : <Badge variant="secondary">Inativo</Badge>}
+            {user.firstAccess && (
+              <Badge variant="warning" title="Ainda não trocou a senha provisória">
+                Primeiro acesso pendente
+              </Badge>
+            )}
+          </div>
+        ),
       },
       {
         key: "acoes",

@@ -8,6 +8,7 @@ import { FormInput } from "@/shared/components/form/form-input";
 import { Button } from "@/shared/components/ui/button";
 import { Lock, User, AlertCircle } from "lucide-react";
 import { getApiErrorMessage } from "@/shared/lib/api-error";
+import { firstAccessStore } from "../lib/first-access";
 
 export function LoginForm() {
   const navigate = useNavigate();
@@ -28,7 +29,13 @@ export function LoginForm() {
   const onSubmit = (data: LoginFormData) => {
     setErrorMessage(null);
     login(data, {
-      onSuccess: () => {
+      onSuccess: (response) => {
+        if (response.firstAccess) {
+          // senha provisória: define a própria antes de entrar (credencial só em memória)
+          firstAccessStore.set({ username: data.username, password: data.password, redirect: redirectUrl });
+          navigate("/primeiro-acesso", { replace: true });
+          return;
+        }
         navigate(redirectUrl);
       },
       onError: (error) => {
