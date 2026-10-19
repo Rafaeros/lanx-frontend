@@ -15,6 +15,7 @@ export function SidebarBrand({
   return (
     <Link to="/app" onClick={onNavigate} aria-label="Ir para o início" className="min-w-0">
       <BrandLogo
+        size="sm"
         caption={
           module && (
             <span

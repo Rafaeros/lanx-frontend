@@ -3,36 +3,35 @@ import { cn } from "@/shared/lib/utils";
 
 export interface BrandLogoProps {
   size?: "sm" | "md" | "lg";
-  showName?: boolean;
+  /** Texto pequeno abaixo da logo (ex.: módulo ativo na sidebar). */
   caption?: React.ReactNode;
   className?: string;
 }
 
-const markSizes = {
-  sm: "h-8 w-8 text-base rounded-lg",
-  md: "h-9 w-9 text-lg rounded-xl",
-  lg: "h-12 w-12 text-2xl rounded-2xl",
+/** Altura da logo; a largura acompanha a proporção da imagem (~2,8 : 1). */
+const heights = {
+  sm: "h-7",
+  md: "h-9",
+  lg: "h-14",
 };
 
-/** Marca LANX: monograma em gradiente + nome. Fonte única para header, sidebar e login. */
-export function BrandLogo({ size = "md", showName = true, caption, className }: BrandLogoProps) {
+/**
+ * Logo LANX Cables. Fonte única para header, sidebar, login e rodapé.
+ * Arquivos em public/brand (gerados a partir de public/hero.png): a versão
+ * escura troca o "CABLES" preto por branco para aparecer no tema escuro.
+ */
+export function BrandLogo({ size = "md", caption, className }: BrandLogoProps) {
+  const img = cn("w-auto shrink-0 select-none", heights[size]);
   return (
-    <div className={cn("flex items-center gap-2.5", className)}>
-      <div
-        className={cn(
-          "flex shrink-0 items-center justify-center bg-gradient-to-tr from-brand-purple to-brand-blue font-display font-bold text-white shadow-sm",
-          markSizes[size]
-        )}
-        aria-hidden="true"
-      >
-        L
-      </div>
-      {showName && (
-        <div className="flex flex-col leading-none">
-          <span className="font-display text-lg font-bold tracking-tight text-foreground">LANX</span>
-          {caption && <span className="mt-1 text-xs text-muted-foreground">{caption}</span>}
-        </div>
-      )}
+    <div className={cn("flex flex-col items-start leading-none", className)}>
+      <img src="/brand/logo.png" alt="LANX Cables" className={cn(img, "dark:hidden")} draggable={false} />
+      <img
+        src="/brand/logo-dark.png"
+        alt="LANX Cables"
+        className={cn(img, "hidden dark:block")}
+        draggable={false}
+      />
+      {caption && <span className="mt-1.5 text-xs text-muted-foreground">{caption}</span>}
     </div>
   );
 }
