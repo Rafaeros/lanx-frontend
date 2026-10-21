@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Check, Eye, X } from "lucide-react";
-import type { IqfFornecedorResponse, PageResult } from "@/shared/api/schema";
+import type { IqfFornecedorResponse } from "../types";
+import type { PageResult } from "@/shared/types";
 import { DataTable, type Column } from "@/shared/components/data-table";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
@@ -33,6 +34,7 @@ export function IqfFornecedoresTable({
       },
       {
         key: "avaliadas",
+        hideBelow: "md",
         header: "Avaliadas",
         align: "right",
         className: "tabular-nums",
@@ -40,6 +42,7 @@ export function IqfFornecedoresTable({
       },
       {
         key: "noPrazo",
+        hideBelow: "lg",
         header: "No prazo",
         align: "right",
         className: "tabular-nums text-success",
@@ -47,6 +50,7 @@ export function IqfFornecedoresTable({
       },
       {
         key: "atrasadas",
+        hideBelow: "lg",
         header: "Atrasadas",
         align: "right",
         className: "tabular-nums",
@@ -78,6 +82,7 @@ export function IqfFornecedoresTable({
       },
       {
         key: "meta",
+        hideBelow: "sm",
         header: `Meta ${META_FORNECEDOR}%`,
         className: "whitespace-nowrap",
         cell: (f) =>

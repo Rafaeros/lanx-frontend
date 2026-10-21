@@ -1,5 +1,5 @@
 import { CalendarCheck, CalendarX, Gauge, PackageCheck } from "lucide-react";
-import type { IqfResponse } from "@/shared/api/schema";
+import type { IqfResponse } from "../types";
 import { Badge } from "@/shared/components/ui/badge";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { cn } from "@/shared/lib/utils";

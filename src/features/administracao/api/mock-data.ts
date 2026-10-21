@@ -1,4 +1,5 @@
-import type { FeatureNode, RoleResponse, UserResponse } from "@/shared/api/schema";
+import type { FeatureNode, RoleResponse } from "../types";
+import type { UserResponse } from "@/shared/types";
 
 /** Dados de desenvolvimento usados só quando VITE_ENABLE_MOCK_FALLBACK está ligado. */
 const perms = (key: string, actions: string[]) => actions.map((action) => ({ code: `${key}:${action}`, action }));

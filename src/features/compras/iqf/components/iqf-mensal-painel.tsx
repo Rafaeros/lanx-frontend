@@ -1,5 +1,5 @@
 import { Inbox, Loader2 } from "lucide-react";
-import type { IqfMesResponse } from "@/shared/api/schema";
+import type { IqfMesResponse } from "../types";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { cn } from "@/shared/lib/utils";
 import { formatMes, formatPercentual, tomDoMes } from "../lib/classificacao";

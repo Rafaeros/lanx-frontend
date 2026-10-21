@@ -1,5 +1,5 @@
 import { AlertTriangle, Clock, DollarSign, Package } from "lucide-react";
-import type { ResumoAnalisePedidosResponse } from "@/shared/api/schema";
+import type { ResumoAnalisePedidosResponse } from "../types";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { formatCurrency } from "@/shared/lib/utils";
 import { cn } from "@/shared/lib/utils";

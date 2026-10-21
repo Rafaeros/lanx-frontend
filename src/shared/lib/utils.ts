@@ -50,3 +50,13 @@ export function formatNumber(value?: number | string | null, decimals = 2): stri
   }).format(num);
 }
 
+
+/**
+ * Texto para comparação em buscas: sem acentos e em minúsculas ("Ação" -> "acao").
+ */
+export function normalizeSearch(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase();
+}

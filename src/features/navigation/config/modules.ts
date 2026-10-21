@@ -1,4 +1,5 @@
 import {
+  Cable,
   ChartColumn,
   Factory,
   Gauge,
@@ -51,8 +52,22 @@ export const MODULES: ModuleDefinition[] = [
     label: "Produção",
     description: "Ordens, apontamentos e roteiros",
     icon: Factory,
-    status: "soon",
-    sections: [],
+    status: "available",
+    featureKey: "producao",
+    sections: [
+      {
+        kind: "operacoes",
+        items: [
+          {
+            id: "producao.comunizado",
+            label: "Comunizado",
+            to: "/producao/comunizado",
+            icon: Cable,
+            featureKey: "producao.comunizado",
+          },
+        ],
+      },
+    ],
   },
   {
     id: "comercial",

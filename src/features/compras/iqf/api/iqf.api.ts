@@ -1,14 +1,14 @@
 import apiClient from "@/shared/api/client";
+import type { ApiResponse } from "@/shared/types";
 import type {
-  ApiResponse,
   ClassificacaoIqfResponse,
   IqfFiltro,
   IqfFornecedorResponse,
   IqfMesResponse,
   IqfResponse,
-} from "@/shared/api/schema";
+} from "../types";
 import { env } from "@/config/env";
-import { saveBlobResponse } from "@/shared/lib/download";
+import { rethrowBlobError, saveBlobResponse } from "@/shared/lib/download";
 
 /** Mesma regra do backend (domain.ClassificacaoIqf), usada apenas no fallback mock. */
 function classificar(percentual: number | null): ClassificacaoIqfResponse | null {
@@ -144,11 +144,13 @@ export const iqfApi = {
 
   /** GET /compras/relatorios/iqf/exportar: baixa a planilha (.xlsx) com o gráfico mensal. */
   exportar: async (filtro: IqfFiltro): Promise<void> => {
-    const response = await apiClient.get<Blob>("/compras/relatorios/iqf/exportar", {
-      params: params(filtro),
-      responseType: "blob",
-      timeout: 120000,
-    });
+    const response = await apiClient
+      .get<Blob>("/compras/relatorios/iqf/exportar", {
+        params: params(filtro),
+        responseType: "blob",
+        timeout: 120000,
+      })
+      .catch(rethrowBlobError);
     saveBlobResponse(response, `iqf-fornecedores_${filtro.dataInicio}_${filtro.dataFim}.xlsx`);
   },
 };

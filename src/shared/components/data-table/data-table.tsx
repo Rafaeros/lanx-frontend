@@ -18,7 +18,16 @@ export interface Column<T> {
   align?: "left" | "center" | "right";
   className?: string;
   width?: string;
+  /** Esconde a coluna abaixo do breakpoint (telas menores ficam só com o essencial). */
+  hideBelow?: "sm" | "md" | "lg" | "xl";
 }
+
+const HIDE_BELOW: Record<NonNullable<Column<unknown>["hideBelow"]>, string> = {
+  sm: "hidden sm:table-cell",
+  md: "hidden md:table-cell",
+  lg: "hidden lg:table-cell",
+  xl: "hidden xl:table-cell",
+};
 
 export interface DataTableProps<T> {
   columns: Column<T>[];
@@ -80,12 +89,12 @@ export function DataTable<T>({
   }, [totalPages, currentPage]);
 
   return (
-    <div className={cn("w-full space-y-4", className)}>
-      {/* Tabela com scroll horizontal responsivo e 100% de ocupação */}
-      <div className="w-full overflow-hidden rounded-xl border border-border bg-card shadow-xs">
-        <div className="w-full overflow-x-auto">
-          <table className="w-full min-w-full text-left text-sm border-collapse">
-            <thead className="border-b border-border bg-muted/60 text-xs font-semibold text-muted-foreground">
+    // Dentro de um PageShell `fill`, ocupa o espaço que sobra na tela (mínimo de 18rem) e só as linhas rolam
+    <div className={cn("flex w-full flex-col gap-3 lg:min-h-72 lg:flex-1", className)}>
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-card shadow-xs">
+        <div className="min-h-0 flex-1 overflow-auto overscroll-contain">
+          <table className="w-full min-w-full border-collapse text-left text-sm">
+            <thead className="sticky top-0 z-10 bg-muted text-xs font-semibold text-muted-foreground shadow-[inset_0_-1px_0_var(--card-border)]">
               <tr>
                 {columns.map((col) => (
                   <th
@@ -96,6 +105,7 @@ export function DataTable<T>({
                       "px-4 py-3.5 whitespace-nowrap",
                       col.align === "center" && "text-center",
                       col.align === "right" && "text-right",
+                      col.hideBelow && HIDE_BELOW[col.hideBelow],
                       col.className
                     )}
                   >
@@ -136,6 +146,7 @@ export function DataTable<T>({
                           "px-4 py-3 text-sm text-foreground",
                           col.align === "center" && "text-center",
                           col.align === "right" && "text-right",
+                          col.hideBelow && HIDE_BELOW[col.hideBelow],
                           col.className
                         )}
                       >
@@ -152,7 +163,7 @@ export function DataTable<T>({
 
       {/* Barra de Paginação Completa e Responsiva */}
       {data && (
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-2 px-1 text-sm text-muted-foreground">
+        <div className="flex shrink-0 flex-col items-center justify-between gap-3 px-1 text-sm text-muted-foreground md:flex-row">
           {/* Contador e Seletor de Tamanho */}
           <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
             <span>

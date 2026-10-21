@@ -8,9 +8,10 @@ import { Input } from "@/shared/components/ui/input";
 import { Dialog } from "@/shared/components/ui/dialog";
 import { ConfirmDialog } from "@/shared/components/ui/confirm-dialog";
 import { PageHeader } from "@/shared/components/ui/page-header";
+import { PageShell } from "@/shared/components/ui/page-shell";
 import { useToast } from "@/shared/components/ui/toast";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
-import type { UnidadeMedidaResponse } from "@/shared/api/schema";
+import type { UnidadeMedidaResponse } from "../types";
 import {
   useCreateUnidadeMedidaMutation,
   useDeleteUnidadeMedidaMutation,
@@ -98,7 +99,7 @@ export function UnidadesMedidaListPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <PageShell fill>
       <PageHeader
         icon={Ruler}
         title="Unidades de medida"
@@ -171,6 +172,6 @@ export function UnidadesMedidaListPage() {
         <p className="font-mono text-sm font-bold text-foreground">{deleteTarget?.sigla}</p>
         <p className="text-xs text-muted-foreground">{deleteTarget?.nome}</p>
       </ConfirmDialog>
-    </div>
+    </PageShell>
   );
 }

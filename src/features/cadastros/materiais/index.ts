@@ -1,3 +1,4 @@
+export * from "./types";
 export * from "./schemas";
 export * from "./api/materiais.api";
 export * from "./api/use-materiais";

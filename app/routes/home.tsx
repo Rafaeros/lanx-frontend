@@ -2,12 +2,12 @@ import { LandingPage } from "@/features/landing";
 
 export function meta() {
   return [
-    { title: "LANX - Gestão industrial" },
+    { title: "LANX Cables - Sistema de gestão" },
     {
       name: "description",
-      content: "Pedidos de compra, prazos de entrega e cadastros de materiais em um só sistema.",
+      content: "Compras, qualidade de fornecedores e produção da LANX Cables em um só sistema.",
     },
-    { property: "og:title", content: "LANX - Gestão industrial" },
+    { property: "og:title", content: "LANX Cables - Sistema de gestão" },
     { property: "og:image", content: "/brand/icon-512.png" },
   ];
 }

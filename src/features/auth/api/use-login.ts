@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authApi } from "./auth.api";
-import type { LoginRequest, LoginResponse } from "@/shared/api/schema";
+import type { LoginRequest, LoginResponse } from "../types";
 
 export function useLogin() {
   const queryClient = useQueryClient();

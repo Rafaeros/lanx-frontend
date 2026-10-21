@@ -1,4 +1,4 @@
-import type { FeatureNode, RoleResponse } from "@/shared/api/schema";
+import type { FeatureNode, RoleResponse } from "../types";
 
 type PermissionItem = FeatureNode["permissions"][number];
 

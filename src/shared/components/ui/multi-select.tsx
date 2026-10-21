@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Check, ChevronDown, Search, X } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+import { cn, normalizeSearch as normalize } from "@/shared/lib/utils";
 
 export interface MultiSelectProps {
   options: string[];
@@ -14,11 +14,6 @@ export interface MultiSelectProps {
   "aria-label"?: string;
 }
 
-const normalize = (text: string) =>
-  text
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase();
 
 /** Seleção múltipla com busca, em popover. Usado nos filtros dos relatórios. */
 export function MultiSelect({
@@ -126,7 +121,7 @@ export function MultiSelect({
                     <span
                       className={cn(
                         "flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors",
-                        checked ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"
+                        checked ? "border-primary bg-brand-gradient text-primary-foreground" : "border-border bg-card"
                       )}
                     >
                       {checked && <Check className="h-3 w-3" strokeWidth={3} />}

@@ -54,7 +54,7 @@ export function Checkbox({
         className={cn(
           "flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors",
           isOn
-            ? "border-primary bg-primary text-primary-foreground"
+            ? "border-primary bg-brand-gradient text-primary-foreground"
             : "border-border bg-card group-enabled:group-hover:border-primary/60"
         )}
       >

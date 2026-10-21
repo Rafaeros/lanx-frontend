@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { RoleRequest } from "@/shared/api/schema";
+import type { RoleRequest } from "../types";
 import { perfisApi } from "../api/perfis.api";
 
 const PERFIS_KEY = ["admin", "perfis"];

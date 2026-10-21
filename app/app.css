@@ -3,11 +3,31 @@
 /* O tema escuro é controlado pela classe .dark no <html> (ThemeProvider), não pela preferência do SO */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * 0. MARCA: para customizar o tema, troque só estas variáveis.
+ * Todo o resto (botões, destaques, foco, gradientes) deriva delas, nos dois temas.
+ */
+:root {
+  --brand-from: #7c01e8;
+  --brand-to: #09abfb;
+  --brand-angle: 120deg;
+
+  --brand-gradient: linear-gradient(var(--brand-angle), var(--brand-from), var(--brand-to));
+  --brand-gradient-hover: linear-gradient(
+    var(--brand-angle),
+    color-mix(in srgb, var(--brand-from) 86%, black),
+    color-mix(in srgb, var(--brand-to) 86%, black)
+  );
+  /* Fundo suave (banners, cards em destaque) */
+  --brand-gradient-soft: linear-gradient(
+    var(--brand-angle),
+    color-mix(in srgb, var(--brand-from) 12%, transparent),
+    color-mix(in srgb, var(--brand-to) 12%, transparent)
+  );
+}
+
 /* 1. Tema CLARO (padrão) */
 :root {
-  /* Marca (fixas) */
-  --brand-purple: #7609e8;
-  --brand-blue: #316ef3;
 
   /* Base */
   --background: #f6f4fa;
@@ -19,29 +39,31 @@
   --muted: #f0eef6;
   --muted-foreground: #625e75;
 
-  /* Ações */
-  --primary: var(--brand-purple);
-  --primary-hover: #6407c7;
+  /* Ações: cor sólida da marca para texto, bordas e tons; fundos usam --brand-gradient */
+  --primary: var(--brand-from);
+  --primary-hover: color-mix(in srgb, var(--brand-from) 85%, black);
   --primary-foreground: #ffffff;
-  --ring: var(--brand-purple);
+  --ring: var(--brand-from);
 
   /* Sidebar */
   --sidebar-bg: #ffffff;
-  --sidebar-active: #f3ebfe;
+  --sidebar-active: color-mix(in srgb, var(--brand-from) 9%, var(--sidebar-bg));
 
   /* Estados semânticos */
   --success: #047857;
   --warning: #b45309;
   --danger: #dc2626;
-  --info: var(--brand-blue);
+  --info: color-mix(in srgb, var(--brand-to) 70%, black);
 
   /* Cor de cada módulo (ícones, seletor, nome na sidebar) */
-  --module-compras: #7609e8;
+  /* Compras amarelo · Produção e Estoque laranja · Comercial e Administração vermelho · Financeiro azul
+     (tons diferentes dentro da mesma família para os módulos não se confundirem) */
+  --module-compras: #ca8a04;
   --module-producao: #ea580c;
-  --module-comercial: #2563eb;
-  --module-estoque: #0891b2;
-  --module-financeiro: #16a34a;
-  --module-administracao: #db2777;
+  --module-comercial: #dc2626;
+  --module-estoque: #c2410c;
+  --module-financeiro: #2563eb;
+  --module-administracao: #be123c;
 
   /* Padrão do grid (pontos) */
   --grid-color: rgba(20, 18, 31, 0.06);
@@ -60,33 +82,34 @@
   --muted: #1c1d2a;
   --muted-foreground: #9a98ad;
 
-  --primary: #9b4dff;
-  --primary-hover: #8a33fb;
+  /* Clareia a marca para manter contraste sobre fundo escuro */
+  --primary: color-mix(in srgb, var(--brand-from) 62%, white);
+  --primary-hover: color-mix(in srgb, var(--brand-from) 75%, white);
   --primary-foreground: #ffffff;
-  --ring: #9b4dff;
+  --ring: var(--primary);
 
   --sidebar-bg: #12131c;
-  --sidebar-active: #241a3a;
+  --sidebar-active: color-mix(in srgb, var(--brand-from) 22%, var(--sidebar-bg));
 
   --success: #34d399;
   --warning: #fbbf24;
   --danger: #f87171;
-  --info: #6b9bff;
+  --info: color-mix(in srgb, var(--brand-to) 80%, white);
 
-  --module-compras: #a66bff;
+  --module-compras: #facc15;
   --module-producao: #fb923c;
-  --module-comercial: #60a5fa;
-  --module-estoque: #22d3ee;
-  --module-financeiro: #4ade80;
-  --module-administracao: #f472b6;
+  --module-comercial: #f87171;
+  --module-estoque: #fdba74;
+  --module-financeiro: #60a5fa;
+  --module-administracao: #fb7185;
 
   --grid-color: rgba(255, 255, 255, 0.05);
 }
 
 /* 3. Mapeamento para o Tailwind v4 (bg-primary, text-muted-foreground, border-border, ...) */
 @theme inline {
-  --color-brand-purple: var(--brand-purple);
-  --color-brand-blue: var(--brand-blue);
+  --color-brand-from: var(--brand-from);
+  --color-brand-to: var(--brand-to);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -110,8 +133,26 @@
 
   --font-sans: var(--font-sans);
   --font-display: var(--font-display);
+}
 
-  --background-image-brand-gradient: linear-gradient(to right, var(--brand-purple), var(--brand-blue));
+/* Utilitários de marca: bg-brand-gradient, hover:bg-brand-gradient-hover, bg-brand-gradient-soft, text-brand-gradient */
+@utility bg-brand-gradient {
+  background-image: var(--brand-gradient);
+}
+
+@utility bg-brand-gradient-hover {
+  background-image: var(--brand-gradient-hover);
+}
+
+@utility bg-brand-gradient-soft {
+  background-image: var(--brand-gradient-soft);
+}
+
+@utility text-brand-gradient {
+  background-image: var(--brand-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
 /* 4. Estilos globais */
@@ -158,6 +199,65 @@ body {
   animation: fade-in 160ms ease-out;
 }
 
+/* Landing: revelação ao entrar na tela (componente <Reveal>) */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal[data-from="left"] { transform: translate3d(-32px, 0, 0); }
+.reveal[data-from="right"] { transform: translate3d(32px, 0, 0); }
+.reveal[data-from="scale"] { transform: scale(0.94); }
+.reveal[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Landing: cabos do hero. O traço é "desenhado" ao carregar e depois um pulso de luz corre por ele */
+.cable-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: cable-draw 2.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.cable-pulse {
+  stroke-dasharray: 0.08 0.92;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  animation: cable-pulse 5s linear infinite;
+}
+@keyframes cable-draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes cable-pulse {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { stroke-dashoffset: -0.08; opacity: 0; }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float {
+  animation: float-y 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal[data-from] {
+    opacity: 1;
+    transform: none;
+  }
+  .cable-path {
+    stroke-dashoffset: 0;
+  }
+  .cable-pulse {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -193,7 +293,7 @@ body {
     --card-border: #e5e2ee;
     --muted: #f0eef6;
     --muted-foreground: #625e75;
-    --primary: #7609e8;
+    --primary: var(--brand-from);
     --success: #047857;
     --warning: #b45309;
     --danger: #dc2626;

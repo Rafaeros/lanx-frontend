@@ -16,10 +16,11 @@ import { Badge } from "@/shared/components/ui/badge";
 import { Dialog } from "@/shared/components/ui/dialog";
 import { ConfirmDialog } from "@/shared/components/ui/confirm-dialog";
 import { PageHeader } from "@/shared/components/ui/page-header";
+import { PageShell } from "@/shared/components/ui/page-shell";
 import { useToast } from "@/shared/components/ui/toast";
 import { getApiErrorMessage } from "@/shared/lib/api-error";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
-import type { FornecedorRequest, FornecedorResponse } from "@/shared/api/schema";
+import type { FornecedorRequest, FornecedorResponse } from "../types";
 import type { FornecedorFormData } from "../schemas";
 
 /** Converte o formulário no corpo da API: select vazio = sem país. */
@@ -101,7 +102,7 @@ export function FornecedoresListPage() {
   };
 
   return (
-    <div className="space-y-6 w-full">
+    <PageShell fill>
       <PageHeader
         icon={Truck}
         title="Fornecedores"
@@ -157,20 +158,18 @@ export function FornecedoresListPage() {
         )}
       </div>
 
-      <div className="w-full">
-        <FornecedorTable
-          data={fornecedoresPage}
-          isLoading={isLoading}
-          onPageChange={setPage}
-          onSizeChange={(newSize) => {
-            setSize(newSize);
-            setPage(0);
-          }}
-          onView={(fornecedor) => setViewTarget(fornecedor)}
-          onEdit={handleOpenEdit}
-          onDelete={(item) => setDeleteTarget(item)}
-        />
-      </div>
+      <FornecedorTable
+        data={fornecedoresPage}
+        isLoading={isLoading}
+        onPageChange={setPage}
+        onSizeChange={(newSize) => {
+          setSize(newSize);
+          setPage(0);
+        }}
+        onView={(fornecedor) => setViewTarget(fornecedor)}
+        onEdit={handleOpenEdit}
+        onDelete={(item) => setDeleteTarget(item)}
+      />
 
       {/* 1. Modal Dialog: VIEW Fornecedor */}
       <Dialog
@@ -255,6 +254,6 @@ export function FornecedoresListPage() {
           País: <span className="font-semibold">{deleteTarget?.pais?.nome ?? "-"}</span>
         </p>
       </ConfirmDialog>
-    </div>
+    </PageShell>
   );
 }

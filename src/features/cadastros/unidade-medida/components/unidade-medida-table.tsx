@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Edit2, Trash2 } from "lucide-react";
-import type { PageResult, UnidadeMedidaResponse } from "@/shared/api/schema";
+import type { PageResult } from "@/shared/types";
+import type { UnidadeMedidaResponse } from "../types";
 import { DataTable, type Column } from "@/shared/components/data-table";
 import { Button } from "@/shared/components/ui/button";
 import { PermissionGate } from "@/features/auth/components/permission-gate";

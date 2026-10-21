@@ -1,6 +1,6 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { env } from "@/config/env";
-import type { ApiResponse } from "./schema";
+import type { ApiResponse } from "@/shared/types";
 
 const TOKEN_KEY = "lanx_access_token";
 const USER_KEY = "lanx_current_user";

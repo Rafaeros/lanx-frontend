@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useSearchParams } from "react-router";
 import { ChartColumnBig, FileSpreadsheet, FileText, Gauge, RefreshCw, Search, Table2, Info, X } from "lucide-react";
-import type { FaixaIqf, IqfFiltro, IqfFornecedorResponse } from "@/shared/api/schema";
+import type { FaixaIqf, IqfFiltro, IqfFornecedorResponse } from "../types";
 import { useDebounce } from "@/shared/hooks/use-debounce";
 import { usePagination } from "@/shared/hooks/use-pagination";
 import { getApiErrorMessage } from "@/shared/lib/api-error";
@@ -11,6 +11,7 @@ import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { MultiSelect } from "@/shared/components/ui/multi-select";
 import { PageHeader } from "@/shared/components/ui/page-header";
+import { PageShell } from "@/shared/components/ui/page-shell";
 import { useToast } from "@/shared/components/ui/toast";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
 import { useExportarIqfMutation, useIqfQuery, useIqfRateiosQuery } from "../hooks/use-iqf";
@@ -27,7 +28,8 @@ import {
   regraPrazo,
 } from "../lib/classificacao";
 import { ToleranciaInput } from "../components/tolerancia-input";
-import { PRESETS, hojeIso, periodoDoPreset, presetDoPeriodo } from "../lib/periodo";
+import { hojeIso } from "@/shared/lib/date";
+import { PRESETS, periodoDoPreset, presetDoPeriodo } from "../lib/periodo";
 
 const FAIXAS: (FaixaIqf | "")[] = ["", "A", "B", "C"];
 type Visao = "tabela" | "grafico";
@@ -62,7 +64,7 @@ function Segmented<T extends string>({
           className={cn(
             "inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-md px-3 text-xs font-medium transition-colors",
             value === o.id
-              ? "bg-primary text-primary-foreground shadow-sm"
+              ? "bg-brand-gradient text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"
           )}
         >
@@ -148,7 +150,7 @@ export function IqfPage() {
   const encerrarImpressao = React.useCallback(() => setImprimindo(false), []);
 
   return (
-    <div className="space-y-6">
+    <PageShell>
       <PageHeader
         icon={Gauge}
         title="IQF de fornecedores"
@@ -391,6 +393,6 @@ export function IqfPage() {
           onDone={encerrarImpressao}
         />
       )}
-    </div>
+    </PageShell>
   );
 }

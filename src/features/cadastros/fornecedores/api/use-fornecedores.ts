@@ -1,10 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fornecedoresApi } from "./fornecedores.api";
-import type {
-  CreateFornecedorRequest,
-  FornecedorFilter,
-  UpdateFornecedorRequest,
-} from "@/shared/api/schema";
+import type { CreateFornecedorRequest, FornecedorFilter, UpdateFornecedorRequest } from "../types";
 
 export function useFornecedoresQuery(filter: FornecedorFilter = {}, page = 0, size = 20) {
   return useQuery({

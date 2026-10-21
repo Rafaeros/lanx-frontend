@@ -6,7 +6,7 @@ import { FormInput } from "@/shared/components/form/form-input";
 import { FormSelect } from "@/shared/components/form/form-select";
 import { Button } from "@/shared/components/ui/button";
 import { usePaisesQuery } from "../api/use-fornecedores";
-import type { FornecedorResponse } from "@/shared/api/schema";
+import type { FornecedorResponse } from "../types";
 
 export interface FornecedorFormProps {
   initialData?: FornecedorResponse | null;

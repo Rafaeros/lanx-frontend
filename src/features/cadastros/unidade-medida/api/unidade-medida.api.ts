@@ -1,11 +1,6 @@
 import apiClient from "@/shared/api/client";
-import type {
-  ApiResponse,
-  PageResult,
-  UnidadeMedidaFilter,
-  UnidadeMedidaRequest,
-  UnidadeMedidaResponse,
-} from "@/shared/api/schema";
+import type { ApiResponse, PageResult } from "@/shared/types";
+import type { UnidadeMedidaFilter, UnidadeMedidaRequest, UnidadeMedidaResponse } from "../types";
 import { env } from "@/config/env";
 import { paginate } from "@/shared/lib/pagination";
 

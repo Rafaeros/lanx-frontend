@@ -1,12 +1,6 @@
 import apiClient, { tokenStorage } from "@/shared/api/client";
-import type {
-  ApiResponse,
-  FirstAccessRequest,
-  LoginRequest,
-  LoginResponse,
-  NavigationNode,
-  UserResponse,
-} from "@/shared/api/schema";
+import type { ApiResponse, NavigationNode, UserResponse } from "@/shared/types";
+import type { FirstAccessRequest, LoginRequest, LoginResponse } from "../types";
 import { env } from "@/config/env";
 import { decodeJwtPayload } from "../lib/jwt";
 
@@ -31,6 +25,18 @@ const MOCK_NAVIGATION: NavigationNode[] = [
       {
         key: "cadastros.fornecedores",
         label: "Fornecedores",
+        actions: ["read", "create", "update", "delete"],
+        children: [],
+      },
+      {
+        key: "cadastros.departamentos",
+        label: "Departamentos",
+        actions: ["read", "create", "update", "delete"],
+        children: [],
+      },
+      {
+        key: "cadastros.operadores",
+        label: "Operadores",
         actions: ["read", "create", "update", "delete"],
         children: [],
       },

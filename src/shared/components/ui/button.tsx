@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger" | "gradient";
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
   size?: "sm" | "md" | "lg" | "icon";
   isLoading?: boolean;
 }
@@ -15,9 +15,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       "inline-flex items-center justify-center font-medium rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none";
 
     const variantStyles = {
-      primary: "bg-primary text-primary-foreground hover:bg-primary-hover shadow-sm",
-      gradient:
-        "bg-gradient-to-r from-brand-purple to-brand-blue text-white hover:opacity-95 shadow-sm hover:shadow-md",
+      // Gradiente da marca (tokens em app.css)
+      primary:
+        "bg-brand-gradient text-primary-foreground shadow-sm shadow-primary/20 hover:bg-brand-gradient-hover hover:shadow-md hover:shadow-primary/25",
       secondary: "bg-muted text-foreground hover:bg-muted/80 border border-border",
       outline: "bg-card border border-border text-foreground hover:bg-muted",
       ghost: "bg-transparent text-foreground hover:bg-muted",

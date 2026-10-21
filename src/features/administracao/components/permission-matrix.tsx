@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Download, Search, Upload, X, Zap } from "lucide-react";
-import type { FeatureNode } from "@/shared/api/schema";
+import type { FeatureNode } from "../types";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { cn } from "@/shared/lib/utils";

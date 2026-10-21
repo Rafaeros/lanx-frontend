@@ -3,7 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Lock, User } from "lucide-react";
 import { FormInput } from "@/shared/components/form/form-input";
 import { Button } from "@/shared/components/ui/button";
-import type { RoleResponse, UserResponse } from "@/shared/api/schema";
+import type { RoleResponse } from "../types";
+import type { UserResponse } from "@/shared/types";
 import {
   editarUsuarioSchema,
   novoUsuarioSchema,

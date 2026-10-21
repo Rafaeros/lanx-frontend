@@ -1,5 +1,6 @@
 import * as React from "react";
-import type { FornecedorResponse, PageResult } from "@/shared/api/schema";
+import type { FornecedorResponse } from "../types";
+import type { PageResult } from "@/shared/types";
 import { DataTable, type Column } from "@/shared/components/data-table";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
@@ -34,6 +35,7 @@ export function FornecedorTable({
       },
       {
         key: "pais",
+        hideBelow: "sm",
         header: "País",
         width: "220px",
         cell: (item) =>

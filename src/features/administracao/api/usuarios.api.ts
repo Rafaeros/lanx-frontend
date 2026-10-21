@@ -1,10 +1,6 @@
 import apiClient from "@/shared/api/client";
-import type {
-  ApiResponse,
-  RegisterUserRequest,
-  UpdateUserRequest,
-  UserResponse,
-} from "@/shared/api/schema";
+import type { ApiResponse, UserResponse } from "@/shared/types";
+import type { RegisterUserRequest, UpdateUserRequest } from "../types";
 import { env } from "@/config/env";
 import { mockStore } from "./mock-data";
 

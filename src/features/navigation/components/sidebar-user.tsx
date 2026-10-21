@@ -13,7 +13,7 @@ export function SidebarUser({ user, onLogout }: SidebarUserProps) {
 
   return (
     <div className="flex items-center gap-3 border-t border-border p-3">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-gradient text-sm font-semibold text-white">
         {username.charAt(0).toUpperCase()}
       </div>
       <div className="min-w-0 flex-1">

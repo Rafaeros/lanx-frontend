@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Edit2 } from "lucide-react";
-import type { PageResult, UserResponse } from "@/shared/api/schema";
+import type { PageResult, UserResponse } from "@/shared/types";
 import { DataTable, type Column } from "@/shared/components/data-table";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
@@ -31,6 +31,7 @@ export function UsuariosTable({ data, isLoading, onPageChange, onSizeChange, onE
       },
       {
         key: "roles",
+        hideBelow: "sm",
         header: "Perfis",
         cell: (user) => (
           <div className="flex flex-wrap gap-1">

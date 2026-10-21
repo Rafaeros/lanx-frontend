@@ -1,5 +1,4 @@
-const toIso = (d: Date) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+import { toIsoDate as toIso } from "@/shared/lib/date";
 
 /** Primeiro e último dia do mês corrente (YYYY-MM-DD, fuso local). */
 export function mesAtual(): { inicio: string; fim: string } {

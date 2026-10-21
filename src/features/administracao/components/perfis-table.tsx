@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Edit2, Eye } from "lucide-react";
-import type { PageResult, RoleResponse } from "@/shared/api/schema";
+import type { PageResult } from "@/shared/types";
+import type { RoleResponse } from "../types";
 import { DataTable, type Column } from "@/shared/components/data-table";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
@@ -33,11 +34,13 @@ export function PerfisTable({ data, isLoading, onPageChange, onSizeChange, onOpe
       },
       {
         key: "description",
+        hideBelow: "md",
         header: "Descrição",
         cell: (role) => <span className="text-muted-foreground">{role.description || "-"}</span>,
       },
       {
         key: "permissions",
+        hideBelow: "sm",
         header: "Permissões",
         width: "130px",
         align: "center",

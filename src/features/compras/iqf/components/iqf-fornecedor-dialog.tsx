@@ -1,5 +1,5 @@
 import { CalendarCheck, CalendarX, PackageCheck } from "lucide-react";
-import type { IqfFiltro, IqfFornecedorResponse } from "@/shared/api/schema";
+import type { IqfFiltro, IqfFornecedorResponse } from "../types";
 import { getApiErrorMessage } from "@/shared/lib/api-error";
 import { cn } from "@/shared/lib/utils";
 import { Badge } from "@/shared/components/ui/badge";

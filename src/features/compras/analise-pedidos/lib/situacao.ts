@@ -1,4 +1,4 @@
-import type { AnalisePedidoResponse, SituacaoPedido } from "@/shared/api/schema";
+import type { AnalisePedidoResponse, SituacaoPedido } from "../types";
 import type { BadgeProps } from "@/shared/components/ui/badge";
 
 export const SITUACAO_LABELS: Record<SituacaoPedido, string> = {

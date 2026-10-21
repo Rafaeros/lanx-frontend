@@ -12,16 +12,16 @@ export function ProductPreview() {
 
   return (
     <div aria-hidden="true" className="relative select-none">
-      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_24px_60px_-24px_rgba(118,9,232,0.35)]">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_24px_60px_-24px_color-mix(in_srgb,var(--brand-from)_40%,transparent)]">
         <div className="flex h-9 items-center gap-1.5 border-b border-border bg-muted/60 px-3">
           <span className="h-2.5 w-2.5 rounded-full bg-border" />
           <span className="h-2.5 w-2.5 rounded-full bg-border" />
           <span className="h-2.5 w-2.5 rounded-full bg-border" />
         </div>
 
-        <div className="grid grid-cols-[11rem_1fr] text-[11px]">
+        <div className="grid grid-cols-1 text-[11px] sm:grid-cols-[11rem_1fr]">
           {/* mini sidebar */}
-          <div className="space-y-2 border-r border-border bg-sidebar p-3">
+          <div className="hidden space-y-2 border-r border-border bg-sidebar p-3 sm:block">
             <div className="flex items-center justify-between">
               <span className="leading-none">
                 <span className="block font-display text-sm font-bold text-foreground">LANX</span>

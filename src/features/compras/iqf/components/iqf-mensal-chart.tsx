@@ -11,7 +11,7 @@ import {
   YAxis,
   type TooltipContentProps,
 } from "recharts";
-import type { IqfMesResponse } from "@/shared/api/schema";
+import type { IqfMesResponse } from "../types";
 import { Badge } from "@/shared/components/ui/badge";
 import { FAIXA_BADGE, FAIXA_LABELS, formatPercentual, formatMes, tomDoMes } from "../lib/classificacao";
 

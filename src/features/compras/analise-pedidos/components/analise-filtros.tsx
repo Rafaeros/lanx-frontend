@@ -1,5 +1,5 @@
 import { Search, X } from "lucide-react";
-import type { SituacaoPedido } from "@/shared/api/schema";
+import type { SituacaoPedido } from "../types";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/lib/utils";
@@ -80,7 +80,7 @@ export function AnaliseFiltros({ value, onChange, onClear, periodoInvalido }: An
                 className={cn(
                   "cursor-pointer rounded-md px-3 text-xs font-medium transition-colors",
                   value.situacao === s
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-brand-gradient text-primary-foreground"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
               >

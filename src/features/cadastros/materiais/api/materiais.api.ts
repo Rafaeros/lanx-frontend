@@ -1,12 +1,11 @@
 import apiClient from "@/shared/api/client";
+import type { ApiResponse, PageResult } from "@/shared/types";
 import type {
-  ApiResponse,
-  PageResult,
   MaterialResponse,
   CreateMaterialRequest,
   UpdateMaterialRequest,
   MaterialFilter,
-} from "@/shared/api/schema";
+} from "../types";
 import { env } from "@/config/env";
 
 let mockMateriais: MaterialResponse[] = [

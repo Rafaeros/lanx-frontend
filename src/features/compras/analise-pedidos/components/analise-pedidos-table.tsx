@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Info } from "lucide-react";
-import type { AnalisePedidoResponse, PageResult } from "@/shared/api/schema";
+import type { AnalisePedidoResponse } from "../types";
+import type { PageResult } from "@/shared/types";
 import { DataTable, type Column } from "@/shared/components/data-table";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
@@ -39,6 +40,7 @@ export function AnalisePedidosTable({
       },
       {
         key: "emissao",
+        hideBelow: "md",
         header: "Emissão",
         className: "whitespace-nowrap",
         cell: (p) => (
@@ -54,7 +56,7 @@ export function AnalisePedidosTable({
         key: "fornecedor",
         header: "Fornecedor",
         cell: (p) => (
-          <div className="max-w-[14rem]">
+          <div className="max-w-[12rem]">
             <div className="font-medium text-foreground">{p.fornecedor?.nome || "-"}</div>
             <div className="text-xs text-muted-foreground">{p.comprador}</div>
           </div>
@@ -62,6 +64,7 @@ export function AnalisePedidosTable({
       },
       {
         key: "item",
+        hideBelow: "lg",
         header: "Item",
         cell: (p) => (
           <div>
@@ -74,6 +77,7 @@ export function AnalisePedidosTable({
       },
       {
         key: "quantidade",
+        hideBelow: "xl",
         header: "Atend. / Solic.",
         align: "right",
         className: "whitespace-nowrap",
@@ -104,6 +108,7 @@ export function AnalisePedidosTable({
       },
       {
         key: "valor",
+        hideBelow: "sm",
         header: "Valor total",
         align: "right",
         className: "whitespace-nowrap",
@@ -113,7 +118,8 @@ export function AnalisePedidosTable({
         key: "acoes",
         header: "",
         align: "right",
-        width: "56px",
+        width: "48px",
+        className: "pl-0 pr-2",
         cell: (p) => (
           <Button
             variant="ghost"

@@ -1,14 +1,13 @@
 import apiClient from "@/shared/api/client";
+import type { ApiResponse, PageResult } from "@/shared/types";
 import type {
-  ApiResponse,
   AnalisePedidoResponse,
   AnalisePedidosFiltro,
   ImportarAnalisePedidoResponse,
-  PageResult,
   ResumoAnalisePedidosResponse,
-} from "@/shared/api/schema";
+} from "../types";
 import { env } from "@/config/env";
-import { saveBlobResponse } from "@/shared/lib/download";
+import { rethrowBlobError, saveBlobResponse } from "@/shared/lib/download";
 import { paginate } from "@/shared/lib/pagination";
 import { situacaoDe } from "../lib/situacao";
 
@@ -189,11 +188,13 @@ export const analisePedidosApi = {
 
   /** GET .../exportar: planilha (.xlsx) com todos os itens dos filtros, sem paginação. */
   exportar: async (filtro: AnalisePedidosFiltro): Promise<void> => {
-    const response = await apiClient.get<Blob>("/compras/relatorios/analise-pedidos/exportar", {
-      params: params(filtro),
-      responseType: "blob",
-      timeout: 120000,
-    });
+    const response = await apiClient
+      .get<Blob>("/compras/relatorios/analise-pedidos/exportar", {
+        params: params(filtro),
+        responseType: "blob",
+        timeout: 120000,
+      })
+      .catch(rethrowBlobError);
     saveBlobResponse(response, `analise-pedidos_${filtro.dataInicio}_${filtro.dataFim}.xlsx`);
   },
 

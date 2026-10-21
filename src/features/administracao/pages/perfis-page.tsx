@@ -6,10 +6,11 @@ import { getApiErrorMessage } from "@/shared/lib/api-error";
 import { Button } from "@/shared/components/ui/button";
 import { Dialog } from "@/shared/components/ui/dialog";
 import { PageHeader } from "@/shared/components/ui/page-header";
+import { PageShell } from "@/shared/components/ui/page-shell";
 import { useToast } from "@/shared/components/ui/toast";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
 import { useCan } from "@/features/auth/hooks/use-can";
-import type { RoleResponse } from "@/shared/api/schema";
+import type { RoleResponse } from "../types";
 import {
   useCreatePerfilMutation,
   useFeatureCatalogQuery,
@@ -87,7 +88,7 @@ export function PerfisPage() {
       : "Marque o que os usuários deste perfil podem fazer em cada módulo.";
 
   return (
-    <div className="space-y-6">
+    <PageShell fill>
       <PageHeader
         icon={KeyRound}
         title="Perfis e permissões"
@@ -132,6 +133,6 @@ export function PerfisPage() {
           />
         )}
       </Dialog>
-    </div>
+    </PageShell>
   );
 }

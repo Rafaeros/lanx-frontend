@@ -21,3 +21,20 @@ export function saveBlobResponse(response: AxiosResponse<Blob>, fallbackName: st
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+
+/**
+ * Em requisições com `responseType: "blob"`, o corpo de erro do backend
+ * ({ status, message }) chega como Blob e getApiErrorMessage não consegue lê-lo.
+ * Converte esse corpo de volta para JSON e relança o mesmo erro.
+ */
+export async function rethrowBlobError(error: unknown): Promise<never> {
+  const data = (error as { response?: { data?: unknown } })?.response?.data;
+  if (data instanceof Blob) {
+    try {
+      (error as { response: { data: unknown } }).response.data = JSON.parse(await data.text());
+    } catch {
+      // corpo não é JSON: mantém o erro como veio
+    }
+  }
+  throw error;
+}

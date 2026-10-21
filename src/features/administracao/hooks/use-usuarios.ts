@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { RegisterUserRequest, UpdateUserRequest } from "@/shared/api/schema";
+import type { RegisterUserRequest, UpdateUserRequest } from "../types";
 import { usuariosApi } from "../api/usuarios.api";
 
 const USUARIOS_KEY = ["admin", "usuarios"];

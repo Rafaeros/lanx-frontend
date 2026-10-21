@@ -93,7 +93,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
         <div className="mt-6">
           <a
             href="/"
-            className="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary-hover"
+            className="inline-flex items-center px-4 py-2 rounded-lg bg-brand-gradient text-primary-foreground text-sm font-medium hover:bg-brand-gradient-hover"
           >
             Voltar ao início
           </a>

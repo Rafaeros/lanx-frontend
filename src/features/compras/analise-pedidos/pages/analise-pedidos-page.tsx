@@ -5,9 +5,10 @@ import { usePagination } from "@/shared/hooks/use-pagination";
 import { getApiErrorMessage } from "@/shared/lib/api-error";
 import { Button } from "@/shared/components/ui/button";
 import { PageHeader } from "@/shared/components/ui/page-header";
+import { PageShell } from "@/shared/components/ui/page-shell";
 import { useToast } from "@/shared/components/ui/toast";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
-import type { AnalisePedidoResponse, AnalisePedidosFiltro } from "@/shared/api/schema";
+import type { AnalisePedidoResponse, AnalisePedidosFiltro } from "../types";
 import {
   useAnalisePedidosQuery,
   useExportarPedidosMutation,
@@ -77,7 +78,7 @@ export function AnalisePedidosPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <PageShell>
       <PageHeader
         icon={ChartColumn}
         title="Análise de pedidos"
@@ -149,6 +150,6 @@ export function AnalisePedidosPage() {
       />
 
       <PedidoDetalhesDialog pedido={detalhe} onClose={() => setDetalhe(null)} />
-    </div>
+    </PageShell>
   );
 }

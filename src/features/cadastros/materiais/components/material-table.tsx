@@ -1,5 +1,6 @@
 import * as React from "react";
-import type { MaterialResponse, PageResult } from "@/shared/api/schema";
+import type { MaterialResponse } from "../types";
+import type { PageResult } from "@/shared/types";
 import { DataTable, type Column } from "@/shared/components/data-table";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
@@ -48,6 +49,7 @@ export function MaterialTable({
       },
       {
         key: "unidadeMedida",
+        hideBelow: "sm",
         header: "Unidade",
         width: "180px",
         cell: (item) => (

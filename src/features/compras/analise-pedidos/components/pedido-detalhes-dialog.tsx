@@ -1,4 +1,4 @@
-import type { AnalisePedidoResponse } from "@/shared/api/schema";
+import type { AnalisePedidoResponse } from "../types";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Dialog } from "@/shared/components/ui/dialog";

@@ -1,5 +1,5 @@
 import { cn } from "@/shared/lib/utils";
-import type { RoleResponse } from "@/shared/api/schema";
+import type { RoleResponse } from "../types";
 import { Checkbox } from "./checkbox";
 
 export interface RolePickerProps {

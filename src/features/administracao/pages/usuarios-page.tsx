@@ -7,10 +7,11 @@ import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Dialog } from "@/shared/components/ui/dialog";
 import { PageHeader } from "@/shared/components/ui/page-header";
+import { PageShell } from "@/shared/components/ui/page-shell";
 import { useToast } from "@/shared/components/ui/toast";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
-import type { UserResponse } from "@/shared/api/schema";
+import type { UserResponse } from "@/shared/types";
 import { useCreateUsuarioMutation, useUpdateUsuarioMutation, useUsuariosQuery } from "../hooks/use-usuarios";
 import { usePerfisQuery } from "../hooks/use-perfis";
 import { UsuariosTable } from "../components/usuarios-table";
@@ -64,7 +65,7 @@ export function UsuariosPage() {
   const openEdit = React.useCallback((user: UserResponse) => setEditing(user), []);
 
   return (
-    <div className="space-y-6">
+    <PageShell fill>
       <PageHeader
         icon={UserCog}
         title="Usuários"
@@ -131,6 +132,6 @@ export function UsuariosPage() {
           />
         )}
       </Dialog>
-    </div>
+    </PageShell>
   );
 }

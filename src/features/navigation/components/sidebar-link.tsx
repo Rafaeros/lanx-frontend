@@ -34,14 +34,22 @@ export function SidebarLink({ item, onNavigate }: SidebarLinkProps) {
       className={({ isActive }) =>
         cn(
           baseClass,
+          "relative",
           isActive
             ? "bg-sidebar-active font-semibold text-primary"
             : "font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
         )
       }
     >
-      <Icon className="h-4 w-4 shrink-0" />
-      <span className="truncate">{item.label}</span>
+      {({ isActive }) => (
+        <>
+          {isActive && (
+            <span aria-hidden="true" className="absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-brand-gradient" />
+          )}
+          <Icon className="h-4 w-4 shrink-0" />
+          <span className="truncate">{item.label}</span>
+        </>
+      )}
     </NavLink>
   );
 }

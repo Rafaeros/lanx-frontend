@@ -1,8 +1,4 @@
-const toIso = (d: Date) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-
-/** Data de hoje (YYYY-MM-DD, fuso local). */
-export const hojeIso = () => toIso(new Date());
+import { toIsoDate as toIso } from "@/shared/lib/date";
 
 export type PresetPeriodo = "mes" | "3m" | "6m" | "12m" | "ano";
 

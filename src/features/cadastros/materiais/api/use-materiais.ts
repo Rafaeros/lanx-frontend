@@ -6,7 +6,7 @@ import type {
   MaterialFilter,
   MaterialResponse,
   UpdateMaterialRequest,
-} from "@/shared/api/schema";
+} from "../types";
 
 export function useMateriaisQuery(
   filter: MaterialFilter = {},

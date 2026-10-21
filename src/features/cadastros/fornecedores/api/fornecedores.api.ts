@@ -1,13 +1,12 @@
 import apiClient from "@/shared/api/client";
+import type { ApiResponse, PageResult } from "@/shared/types";
 import type {
-  ApiResponse,
-  PageResult,
   FornecedorResponse,
   CreateFornecedorRequest,
   UpdateFornecedorRequest,
   FornecedorFilter,
   PaisResponse,
-} from "@/shared/api/schema";
+} from "../types";
 import { env } from "@/config/env";
 import { paginate } from "@/shared/lib/pagination";
 

@@ -1,4 +1,4 @@
-import type { FaixaIqf } from "@/shared/api/schema";
+import type { FaixaIqf } from "../types";
 import type { BadgeProps } from "@/shared/components/ui/badge";
 
 export const FAIXA_LABELS: Record<FaixaIqf, string> = {

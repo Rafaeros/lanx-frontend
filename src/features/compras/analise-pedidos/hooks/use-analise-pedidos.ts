@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { AnalisePedidosFiltro } from "@/shared/api/schema";
+import type { AnalisePedidosFiltro } from "../types";
 import { analisePedidosApi } from "../api/analise-pedidos.api";
 
 const KEY = "analise-pedidos";

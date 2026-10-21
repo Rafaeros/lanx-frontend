@@ -2,7 +2,7 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormInput } from "@/shared/components/form/form-input";
 import { Button } from "@/shared/components/ui/button";
-import type { FeatureNode, RoleResponse } from "@/shared/api/schema";
+import type { FeatureNode, RoleResponse } from "../types";
 import { perfilSchema, type PerfilFormData } from "../lib/schemas";
 import { PermissionMatrix } from "./permission-matrix";
 

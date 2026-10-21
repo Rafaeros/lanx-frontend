@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
-import type { IqfFornecedorResponse, IqfResponse } from "@/shared/api/schema";
+import type { IqfFornecedorResponse, IqfResponse } from "../types";
 import {
   FAIXA_CRITERIO,
   FAIXA_LABELS,

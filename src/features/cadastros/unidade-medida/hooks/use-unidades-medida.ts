@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { unidadeMedidaApi } from "../api/unidade-medida.api";
-import type { UnidadeMedidaFilter, UnidadeMedidaRequest } from "@/shared/api/schema";
+import type { UnidadeMedidaFilter, UnidadeMedidaRequest } from "../types";
 
 /** Chave raiz: invalida tanto a busca paginada quanto a lista usada no select de materiais. */
 const UNIDADES_KEY = "unidadesMedida";

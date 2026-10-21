@@ -16,10 +16,11 @@ import { Badge } from "@/shared/components/ui/badge";
 import { Dialog } from "@/shared/components/ui/dialog";
 import { ConfirmDialog } from "@/shared/components/ui/confirm-dialog";
 import { PageHeader } from "@/shared/components/ui/page-header";
+import { PageShell } from "@/shared/components/ui/page-shell";
 import { useToast } from "@/shared/components/ui/toast";
 import { getApiErrorMessage } from "@/shared/lib/api-error";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
-import type { MaterialResponse } from "@/shared/api/schema";
+import type { MaterialResponse } from "../types";
 import type { MaterialFormData } from "../schemas";
 
 export function MateriaisListPage() {
@@ -104,7 +105,7 @@ export function MateriaisListPage() {
   };
 
   return (
-    <div className="space-y-6 w-full">
+    <PageShell fill>
       <PageHeader
         icon={Package}
         title="Materiais"
@@ -172,20 +173,18 @@ export function MateriaisListPage() {
       </div>
 
       {/* Table Section (100% width, fully responsive) */}
-      <div className="w-full">
-        <MaterialTable
-          data={materiaisPage}
-          isLoading={isLoading}
-          onPageChange={setPage}
-          onSizeChange={(newSize) => {
-            setSize(newSize);
-            setPage(0);
-          }}
-          onView={(material) => setViewTarget(material)}
-          onEdit={handleOpenEdit}
-          onDelete={(item) => setDeleteTarget(item)}
-        />
-      </div>
+      <MaterialTable
+        data={materiaisPage}
+        isLoading={isLoading}
+        onPageChange={setPage}
+        onSizeChange={(newSize) => {
+          setSize(newSize);
+          setPage(0);
+        }}
+        onView={(material) => setViewTarget(material)}
+        onEdit={handleOpenEdit}
+        onDelete={(item) => setDeleteTarget(item)}
+      />
 
       {/* 1. Modal Dialog: VIEW Material Details */}
       <Dialog
@@ -281,6 +280,6 @@ export function MateriaisListPage() {
           Unidade: <span className="font-semibold">{deleteTarget?.unidadeMedida?.sigla}</span>
         </p>
       </ConfirmDialog>
-    </div>
+    </PageShell>
   );
 }

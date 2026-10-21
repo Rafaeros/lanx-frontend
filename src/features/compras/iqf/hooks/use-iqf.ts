@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
-import type { IqfFiltro } from "@/shared/api/schema";
+import type { IqfFiltro } from "../types";
 import { iqfApi } from "../api/iqf.api";
 
 export function useIqfQuery(filtro: IqfFiltro, enabled = true) {

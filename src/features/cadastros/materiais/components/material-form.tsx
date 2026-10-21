@@ -6,7 +6,7 @@ import { FormInput } from "@/shared/components/form/form-input";
 import { FormSelect } from "@/shared/components/form/form-select";
 import { Button } from "@/shared/components/ui/button";
 import { useUnidadesMedidaQuery } from "../api/use-materiais";
-import type { MaterialResponse } from "@/shared/api/schema";
+import type { MaterialResponse } from "../types";
 
 export interface MaterialFormProps {
   initialData?: MaterialResponse | null;

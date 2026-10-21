@@ -1,5 +1,6 @@
 import apiClient from "@/shared/api/client";
-import type { ApiResponse, FeatureNode, RoleRequest, RoleResponse } from "@/shared/api/schema";
+import type { ApiResponse } from "@/shared/types";
+import type { FeatureNode, RoleRequest, RoleResponse } from "../types";
 import { env } from "@/config/env";
 import { MOCK_FEATURES, mockStore } from "./mock-data";
 
