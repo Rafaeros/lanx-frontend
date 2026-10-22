@@ -9,12 +9,23 @@ export interface OperadorResponse {
   nome: string;
   /** Ausente quando o operador não tem departamento (o backend omite nulos). */
   departamento?: DepartamentoSummaryResponse | null;
+  /** Ausente enquanto o operador não for vinculado a um usuário do LANX. */
+  usuario?: UsuarioSummaryResponse | null;
 }
 
-/** Corpo de POST e PUT em /operadores. `departamentoId` nulo deixa (ou volta) o operador sem departamento. */
+export interface UsuarioSummaryResponse {
+  id: string;
+  username: string;
+}
+
+/**
+ * Corpo de POST e PUT em /operadores. `departamentoId`/`userId` nulos deixam (ou voltam) o operador
+ * sem departamento/usuário. Um usuário pode ser de no máximo um operador (409 se já for).
+ */
 export interface OperadorRequest {
   nome: string;
   departamentoId: string | null;
+  userId: string | null;
 }
 
 export interface OperadorFilter {

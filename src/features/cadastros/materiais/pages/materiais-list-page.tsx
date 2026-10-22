@@ -20,7 +20,10 @@ import { PageShell } from "@/shared/components/ui/page-shell";
 import { useToast } from "@/shared/components/ui/toast";
 import { getApiErrorMessage } from "@/shared/lib/api-error";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
-import type { MaterialResponse } from "../types";
+import type { MaterialResponse, TipoMaterial } from "../types";
+import { SearchSelect } from "@/shared/components/ui/search-select";
+import { TIPOS_MATERIAL } from "../lib/tipo-material";
+import { TipoMaterialBadge } from "../components/tipo-material-badge";
 import type { MaterialFormData } from "../schemas";
 
 export function MateriaisListPage() {
@@ -28,6 +31,7 @@ export function MateriaisListPage() {
   const { page, size, setPage, setSize } = usePagination({ initialSize: 20 });
   const [searchCodigo, setSearchCodigo] = React.useState("");
   const [searchDescricao, setSearchDescricao] = React.useState("");
+  const [tipo, setTipo] = React.useState<TipoMaterial | "">("");
 
   const debouncedCodigo = useDebounce(searchCodigo, 350);
   const debouncedDescricao = useDebounce(searchDescricao, 350);
@@ -39,7 +43,7 @@ export function MateriaisListPage() {
     refetch,
     isFetching,
   } = useMateriaisQuery(
-    { codigo: debouncedCodigo, descricao: debouncedDescricao },
+    { codigo: debouncedCodigo, descricao: debouncedDescricao, tipo },
     page,
     size
   );
@@ -134,7 +138,7 @@ export function MateriaisListPage() {
       />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="grid flex-1 gap-3 sm:max-w-2xl sm:grid-cols-2">
+        <div className="grid flex-1 gap-3 sm:grid-cols-2 lg:max-w-4xl lg:grid-cols-[1fr_1fr_14rem]">
           <Input
             placeholder="Buscar por código"
             aria-label="Buscar por código"
@@ -155,14 +159,27 @@ export function MateriaisListPage() {
             }}
             leftIcon={<Search className="h-4 w-4" />}
           />
+          <SearchSelect
+            aria-label="Filtrar por tipo"
+            options={TIPOS_MATERIAL.map((t) => ({ value: t.value, label: t.label, description: t.description }))}
+            value={tipo}
+            onChange={(value) => {
+              setTipo(value as TipoMaterial | "");
+              setPage(0);
+            }}
+            placeholder="Todos os tipos"
+            searchPlaceholder="Buscar tipo"
+            clearable
+          />
         </div>
-        {(searchCodigo || searchDescricao) && (
+        {(searchCodigo || searchDescricao || tipo) && (
           <Button
             variant="ghost"
             size="sm"
             onClick={() => {
               setSearchCodigo("");
               setSearchDescricao("");
+              setTipo("");
               setPage(0);
             }}
             className="self-start text-muted-foreground sm:self-center"
@@ -209,6 +226,7 @@ export function MateriaisListPage() {
                     {viewTarget.unidadeMedida?.sigla?.toUpperCase() || "-"} -{" "}
                     {viewTarget.unidadeMedida?.nome || "-"}
                   </Badge>
+                  <TipoMaterialBadge tipo={viewTarget.tipo} />
                 </div>
                 <h3 className="text-base font-semibold text-foreground pt-1">
                   {viewTarget.descricao}

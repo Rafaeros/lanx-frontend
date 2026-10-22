@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { compradoresApi } from "../api/compradores.api";
-import { usuariosApi } from "@/features/administracao/api/usuarios.api";
 import type { CompradorFilter, CompradorRequest } from "../types";
 
 const COMPRADORES_KEY = "compradores";
@@ -40,18 +39,5 @@ export function useDeleteCompradorMutation() {
   return useMutation({
     mutationFn: (id: string) => compradoresApi.delete(id),
     onSuccess: invalidate,
-  });
-}
-
-/**
- * Usuários do LANX para o vínculo. Listar usuários exige administracao.usuarios:read:
- * sem a permissão a consulta nem dispara e o formulário mostra o campo bloqueado.
- */
-export function useUsuariosParaVinculoQuery(enabled: boolean) {
-  return useQuery({
-    queryKey: ["usuarios", "vinculo-comprador"],
-    queryFn: () => usuariosApi.list(),
-    enabled,
-    staleTime: 60_000,
   });
 }

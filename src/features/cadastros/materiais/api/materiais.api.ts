@@ -14,42 +14,49 @@ let mockMateriais: MaterialResponse[] = [
     codigo: "MAT-1001",
     descricao: "Válvula Esférica Inox 316 2 Polegadas",
     unidadeMedida: { id: "11111111-1111-1111-1111-111111111111", nome: "Unidade", sigla: "UN" },
+    tipo: "MATERIA_PRIMA",
   },
   {
     id: "m-002",
     codigo: "MAT-1002",
     descricao: "Chapa de Aço Carbono 1/4x1200x3000mm",
     unidadeMedida: { id: "22222222-2222-2222-2222-222222222222", nome: "Quilograma", sigla: "KG" },
+    tipo: "MATERIA_PRIMA",
   },
   {
     id: "m-003",
     codigo: "MAT-1003",
     descricao: "Tubo Industrial Schedule 40 3 Metros",
     unidadeMedida: { id: "33333333-3333-3333-3333-333333333333", nome: "Metro", sigla: "M" },
+    tipo: "MATERIA_PRIMA",
   },
   {
     id: "m-004",
     codigo: "MAT-1004",
     descricao: "Óleo Lubrificante Sintético ISO VG 68",
     unidadeMedida: { id: "44444444-4444-4444-4444-444444444444", nome: "Litro", sigla: "L" },
+    tipo: "MATERIA_PRIMA",
   },
   {
     id: "m-005",
     codigo: "MAT-1005",
     descricao: "Parafuso Sextavado M12 x 50mm Galvanizado",
     unidadeMedida: { id: "55555555-5555-5555-5555-555555555555", nome: "Caixa", sigla: "CX" },
+    tipo: "MATERIA_PRIMA",
   },
   {
     id: "m-006",
     codigo: "MAT-1006",
     descricao: "Eletrodo Revestido AWS E7018 3.25mm",
     unidadeMedida: { id: "22222222-2222-2222-2222-222222222222", nome: "Quilograma", sigla: "KG" },
+    tipo: "MATERIA_PRIMA",
   },
   {
     id: "m-007",
     codigo: "MAT-1007",
     descricao: "Gaxeta de Vedação PTFE Expandido 1/2\"",
     unidadeMedida: { id: "33333333-3333-3333-3333-333333333333", nome: "Metro", sigla: "M" },
+    tipo: "MATERIA_PRIMA",
   },
 ];
 
@@ -63,6 +70,7 @@ export const materiaisApi = {
       const params: Record<string, any> = { page, size };
       if (filter.codigo) params.codigo = filter.codigo;
       if (filter.descricao) params.descricao = filter.descricao;
+      if (filter.tipo) params.tipo = filter.tipo;
 
       const response = await apiClient.get<ApiResponse<PageResult<MaterialResponse>>>(
         "/materiais",
@@ -81,6 +89,9 @@ export const materiaisApi = {
           filtered = filtered.filter((m) =>
             m.descricao.toLowerCase().includes(filter.descricao!.toLowerCase())
           );
+        }
+        if (filter.tipo) {
+          filtered = filtered.filter((m) => m.tipo === filter.tipo);
         }
         const totalElements = filtered.length;
         const totalPages = Math.ceil(totalElements / size) || 1;
@@ -127,6 +138,7 @@ export const materiaisApi = {
             nome: "Unidade",
             sigla: "UN",
           },
+          tipo: data.tipo,
         };
         mockMateriais = [newMaterial, ...mockMateriais];
         return newMaterial;
@@ -147,6 +159,7 @@ export const materiaisApi = {
             ...mockMateriais[index],
             codigo: data.codigo,
             descricao: data.descricao,
+            tipo: data.tipo,
           };
           return mockMateriais[index];
         }

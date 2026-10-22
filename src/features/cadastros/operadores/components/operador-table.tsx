@@ -4,6 +4,7 @@ import type { PageResult } from "@/shared/types";
 import type { OperadorResponse } from "../types";
 import { DataTable, type Column } from "@/shared/components/data-table";
 import { Badge } from "@/shared/components/ui/badge";
+import { UsuarioVinculoBadge } from "@/features/administracao/components/usuario-vinculo-badge";
 import { Button } from "@/shared/components/ui/button";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
 
@@ -35,6 +36,13 @@ export function OperadorTable({ data, isLoading, onPageChange, onSizeChange, onE
           ) : (
             <span className="text-xs text-muted-foreground">-</span>
           ),
+      },
+      {
+        key: "usuario",
+        hideBelow: "md",
+        header: "Usuário do LANX",
+        width: "200px",
+        cell: (item) => <UsuarioVinculoBadge usuario={item.usuario} />,
       },
       {
         key: "acoes",

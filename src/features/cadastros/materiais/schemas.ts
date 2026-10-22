@@ -12,6 +12,7 @@ export const materialSchema = z.object({
   unidadeMedidaId: z
     .string()
     .min(1, "Selecione uma unidade de medida"),
+  tipo: z.enum(["MATERIA_PRIMA", "PRODUTO_ACABADO"], { message: "Selecione o tipo" }),
 });
 
 export type MaterialFormData = z.infer<typeof materialSchema>;

@@ -5,6 +5,7 @@ import { FormInput } from "@/shared/components/form/form-input";
 import { FormSearchSelect } from "@/shared/components/form/form-search-select";
 import { Button } from "@/shared/components/ui/button";
 import { useDepartamentosQuery } from "@/features/cadastros/departamentos";
+import { FormUsuarioVinculo } from "@/features/administracao/components/form-usuario-vinculo";
 import type { OperadorResponse } from "../types";
 import { operadorSchema, type OperadorFormData } from "../schemas";
 
@@ -23,6 +24,7 @@ export function OperadorForm({ initialData, onSubmit, onCancel, isLoading }: Ope
     defaultValues: {
       nome: initialData?.nome ?? "",
       departamentoId: initialData?.departamento?.id ?? "",
+      userId: initialData?.usuario?.id ?? "",
     },
   });
 
@@ -46,6 +48,12 @@ export function OperadorForm({ initialData, onSubmit, onCancel, isLoading }: Ope
           isLoading={isLoadingDepartamentos}
           clearable
           hint="Opcional. Use o X para deixar o operador sem departamento."
+        />
+
+        <FormUsuarioVinculo
+          usuarioAtual={initialData?.usuario}
+          perfilPrioritario={/opera|produ/i}
+          hint="Opcional. Cada usuário pode ser de um único operador; use o X para desfazer."
         />
 
         <div className="flex items-center justify-end gap-3 border-t border-border pt-3">

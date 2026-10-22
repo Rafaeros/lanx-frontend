@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { materialSchema, type MaterialFormData } from "../schemas";
 import { FormInput } from "@/shared/components/form/form-input";
 import { FormSelect } from "@/shared/components/form/form-select";
+import { TIPOS_MATERIAL } from "../lib/tipo-material";
 import { Button } from "@/shared/components/ui/button";
 import { useUnidadesMedidaQuery } from "../api/use-materiais";
 import type { MaterialResponse } from "../types";
@@ -29,6 +30,7 @@ export function MaterialForm({
       codigo: initialData?.codigo ?? "",
       descricao: initialData?.descricao ?? "",
       unidadeMedidaId: initialData?.unidadeMedida?.id ?? "",
+      tipo: initialData?.tipo ?? "MATERIA_PRIMA",
     },
   });
 
@@ -56,13 +58,22 @@ export function MaterialForm({
           required
         />
 
-        <FormSelect
-          name="unidadeMedidaId"
-          label="Unidade de Medida"
-          placeholder={isLoadingUnidades ? "Carregando unidades..." : "Selecione uma unidade"}
-          options={unidadeOptions}
-          required
-        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormSelect
+            name="unidadeMedidaId"
+            label="Unidade de Medida"
+            placeholder={isLoadingUnidades ? "Carregando unidades..." : "Selecione uma unidade"}
+            options={unidadeOptions}
+            required
+          />
+          <FormSelect
+            name="tipo"
+            label="Tipo"
+            options={TIPOS_MATERIAL.map((t) => ({ value: t.value, label: t.label }))}
+            hint="Itens importados das compras entram como matéria-prima."
+            required
+          />
+        </div>
 
         <div className="flex items-center justify-end gap-3 pt-3 border-t border-border">
           <Button

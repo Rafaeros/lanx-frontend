@@ -58,8 +58,12 @@ export function OperadoresListPage() {
   };
 
   const handleSubmit = (formData: OperadorFormData) => {
-    // Select vazio = sem departamento
-    const request: OperadorRequest = { nome: formData.nome.trim(), departamentoId: formData.departamentoId || null };
+    // Select vazio = sem departamento / sem usuário
+    const request: OperadorRequest = {
+      nome: formData.nome.trim(),
+      departamentoId: formData.departamentoId || null,
+      userId: formData.userId || null,
+    };
     const onError = (err: unknown) =>
       toast.error("Não foi possível salvar o operador", getApiErrorMessage(err, "Tente novamente."));
 

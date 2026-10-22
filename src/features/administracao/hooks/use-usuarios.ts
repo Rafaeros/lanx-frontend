@@ -28,3 +28,11 @@ export function useUpdateUsuarioMutation() {
     },
   });
 }
+
+/**
+ * Usuários para os vínculos de cadastros (comprador, operador). Listar usuários exige
+ * administracao.usuarios:read: sem a permissão a consulta nem dispara.
+ */
+export function useUsuariosParaVinculoQuery(enabled: boolean) {
+  return useQuery({ queryKey: [...USUARIOS_KEY, "vinculo"], queryFn: usuariosApi.list, enabled, staleTime: 60_000 });
+}

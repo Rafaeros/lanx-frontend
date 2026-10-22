@@ -48,6 +48,7 @@ export const operadoresApi = {
           id: "o-" + Date.now(),
           nome: data.nome,
           departamento: departamentoMock(data.departamentoId),
+          usuario: data.userId ? { id: data.userId, username: data.userId } : null,
         };
         mockOperadores = [novo, ...mockOperadores];
         return novo;
@@ -62,7 +63,12 @@ export const operadoresApi = {
       return response.data.data;
     } catch (error) {
       if (env.VITE_ENABLE_MOCK_FALLBACK) {
-        const atualizado: OperadorResponse = { id, nome: data.nome, departamento: departamentoMock(data.departamentoId) };
+        const atualizado: OperadorResponse = {
+          id,
+          nome: data.nome,
+          departamento: departamentoMock(data.departamentoId),
+          usuario: data.userId ? { id: data.userId, username: data.userId } : null,
+        };
         mockOperadores = mockOperadores.map((o) => (o.id === id ? atualizado : o));
         return atualizado;
       }

@@ -2,6 +2,7 @@ import * as React from "react";
 import type { MaterialResponse } from "../types";
 import type { PageResult } from "@/shared/types";
 import { DataTable, type Column } from "@/shared/components/data-table";
+import { TipoMaterialBadge } from "./tipo-material-badge";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
@@ -46,6 +47,13 @@ export function MaterialTable({
             {item.descricao}
           </div>
         ),
+      },
+      {
+        key: "tipo",
+        hideBelow: "md",
+        header: "Tipo",
+        width: "160px",
+        cell: (item) => <TipoMaterialBadge tipo={item.tipo} />,
       },
       {
         key: "unidadeMedida",

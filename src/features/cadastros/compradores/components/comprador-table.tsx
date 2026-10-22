@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Edit2, Trash2, UserRoundCheck } from "lucide-react";
+import { Edit2, Trash2 } from "lucide-react";
 import type { PageResult } from "@/shared/types";
 import type { CompradorResponse } from "../types";
 import { DataTable, type Column } from "@/shared/components/data-table";
-import { Badge } from "@/shared/components/ui/badge";
+import { UsuarioVinculoBadge } from "@/features/administracao/components/usuario-vinculo-badge";
 import { Button } from "@/shared/components/ui/button";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
 
@@ -29,15 +29,7 @@ export function CompradorTable({ data, isLoading, onPageChange, onSizeChange, on
         hideBelow: "sm",
         header: "Usuário do LANX",
         width: "240px",
-        cell: (item) =>
-          item.usuario ? (
-            <span className="inline-flex items-center gap-1.5 text-sm text-foreground">
-              <UserRoundCheck className="h-4 w-4 text-success" aria-hidden="true" />
-              {item.usuario.username}
-            </span>
-          ) : (
-            <Badge variant="secondary">Sem vínculo</Badge>
-          ),
+        cell: (item) => <UsuarioVinculoBadge usuario={item.usuario} />,
       },
       {
         key: "acoes",
