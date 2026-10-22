@@ -41,6 +41,18 @@ const MOCK_NAVIGATION: NavigationNode[] = [
         children: [],
       },
       {
+        key: "cadastros.compradores",
+        label: "Compradores",
+        actions: ["read", "create", "update", "delete"],
+        children: [],
+      },
+      {
+        key: "cadastros.rateios",
+        label: "Rateios",
+        actions: ["read", "create", "update", "delete"],
+        children: [],
+      },
+      {
         key: "cadastros.pais",
         label: "Países",
         actions: ["read"],

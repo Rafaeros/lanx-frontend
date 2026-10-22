@@ -22,6 +22,8 @@ export default [
     route("cadastros/fornecedores", "routes/_app.cadastros.fornecedores.tsx"),
     route("cadastros/departamentos", "routes/_app.cadastros.departamentos.tsx"),
     route("cadastros/operadores", "routes/_app.cadastros.operadores.tsx"),
+    route("cadastros/compradores", "routes/_app.cadastros.compradores.tsx"),
+    route("cadastros/rateios", "routes/_app.cadastros.rateios.tsx"),
     route("compras/analise-pedidos", "routes/_app.compras.analise-pedidos.tsx"),
     route("compras/iqf", "routes/_app.compras.iqf.tsx"),
     route("producao/comunizado", "routes/_app.producao.comunizado.tsx"),
