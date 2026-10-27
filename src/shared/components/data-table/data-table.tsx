@@ -92,7 +92,8 @@ export function DataTable<T>({
     // Dentro de um PageShell `fill`, ocupa o espaço que sobra na tela (mínimo de 18rem) e só as linhas rolam
     <div className={cn("flex w-full flex-col gap-3 lg:min-h-72 lg:flex-1", className)}>
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-card shadow-xs">
-        <div className="min-h-0 flex-1 overflow-auto overscroll-contain">
+        {/* só o eixo X fica contido: com o Y contido, a roda do mouse sobre a tabela não rolava a página */}
+        <div className="min-h-0 flex-1 overflow-auto overscroll-x-contain">
           <table className="w-full min-w-full border-collapse text-left text-sm">
             <thead className="sticky top-0 z-10 bg-muted text-xs font-semibold text-muted-foreground shadow-[inset_0_-1px_0_var(--card-border)]">
               <tr>
@@ -163,7 +164,7 @@ export function DataTable<T>({
 
       {/* Barra de Paginação Completa e Responsiva */}
       {data && (
-        <div className="flex shrink-0 flex-col items-center justify-between gap-3 px-1 text-sm text-muted-foreground md:flex-row">
+        <div className="flex shrink-0 flex-col items-center justify-between gap-3 px-1 py-1 text-sm text-muted-foreground md:flex-row">
           {/* Contador e Seletor de Tamanho */}
           <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
             <span>

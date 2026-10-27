@@ -1,3 +1,5 @@
+import type { RateioFiltro } from "@/features/compras/shared/rateios";
+
 // --- Compras: IQF (Índice de Qualidade de Fornecedores, critério prazo) ---
 export type FaixaIqf = "A" | "B" | "C";
 
@@ -36,16 +38,18 @@ export interface IqfMesResponse {
 export interface IqfFiltro {
   dataInicio: string;
   dataFim: string;
+  /** Ids dos rateios (cadastros.rateios). */
   rateios: string[];
   /** Dias após a previsão que ainda contam como no prazo (0 a 30; padrão 1). */
   toleranciaDias: number;
 }
 
-/** GET /compras/relatorios/iqf: período pela previsão de entrega do PC. `meses` traz todo mês do período. */
+/** GET /qualidade/relatorios/iqf: período pela previsão de entrega do PC. `meses` traz todo mês do período. */
 export interface IqfResponse {
   dataInicio: string;
   dataFim: string;
-  rateios: string[];
+  /** Rateios filtrados, por nome (vazio = todos). */
+  rateios: RateioFiltro[];
   toleranciaDias: number;
   entregasAvaliadas: number;
   entregasNoPrazo: number;

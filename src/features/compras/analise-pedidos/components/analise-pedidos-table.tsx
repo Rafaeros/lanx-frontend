@@ -58,7 +58,7 @@ export function AnalisePedidosTable({
         cell: (p) => (
           <div className="max-w-[12rem]">
             <div className="font-medium text-foreground">{p.fornecedor?.nome || "-"}</div>
-            <div className="text-xs text-muted-foreground">{p.comprador}</div>
+            <div className="text-xs text-muted-foreground">{p.comprador?.nome}</div>
           </div>
         ),
       },

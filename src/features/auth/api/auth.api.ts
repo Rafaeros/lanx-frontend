@@ -53,6 +53,12 @@ const MOCK_NAVIGATION: NavigationNode[] = [
         children: [],
       },
       {
+        key: "cadastros.clientes",
+        label: "Clientes",
+        actions: ["read", "create", "update", "delete"],
+        children: [],
+      },
+      {
         key: "cadastros.pais",
         label: "Países",
         actions: ["read"],
@@ -71,10 +77,49 @@ const MOCK_NAVIGATION: NavigationNode[] = [
         actions: ["read", "importar"],
         children: [],
       },
+    ],
+  },
+  {
+    key: "producao",
+    label: "Produção",
+    actions: ["read", "create", "update", "delete"],
+    children: [
       {
-        key: "compras.iqf",
+        key: "producao.ordens-producao",
+        label: "Ordens de produção",
+        actions: ["read", "create", "update", "delete"],
+        children: [],
+      },
+      {
+        key: "producao.comunizado",
+        label: "Comunizado",
+        actions: ["read", "importar"],
+        children: [],
+      },
+    ],
+  },
+  {
+    key: "comercial",
+    label: "Comercial",
+    actions: ["read", "create", "update", "delete"],
+    children: [
+      {
+        key: "comercial.carteira",
+        label: "Carteira de pedidos",
+        actions: ["read", "exportar"],
+        children: [],
+      },
+    ],
+  },
+  {
+    key: "qualidade",
+    label: "Qualidade",
+    actions: ["read", "create", "update", "delete"],
+    children: [
+      {
+        key: "qualidade.iqf",
         label: "IQF de Fornecedores",
-        actions: ["read"],
+        actions: ["read", "exportar"],
         children: [],
       },
     ],

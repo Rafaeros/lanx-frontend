@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { MODULES } from "../config/modules";
-import { SHARED_CADASTROS } from "../config/cadastros";
+import { CADASTROS, cadastrosDoModulo } from "../config/cadastros";
 import { SECTION_ORDER } from "../config/sections";
 import { canSeeModule, filterSection } from "../lib/access";
 import type { ModuleDefinition, ModuleId, NavSection } from "../types";
@@ -11,7 +11,10 @@ interface ModuleNavigationValue {
   modules: ModuleDefinition[];
   activeModule: ModuleDefinition | undefined;
   selectModule: (id: ModuleId) => void;
+  /** Cadastros do módulo ativo (os que ele declara e o usuário pode ver). */
   cadastros: NavSection;
+  /** Todos os cadastros que o usuário pode ver, de qualquer módulo (tela inicial). */
+  todosCadastros: NavSection;
   sections: NavSection[];
   isLoading: boolean;
 }
@@ -20,7 +23,7 @@ const ModuleNavigationContext = React.createContext<ModuleNavigationValue | unde
 
 /**
  * Cruza o registro de módulos com as permissões do backend e compartilha com a sidebar e as
- * telas: módulos visíveis, módulo ativo, Cadastros (compartilhado) e seções do módulo ativo.
+ * telas: módulos visíveis, módulo ativo, Cadastros do módulo ativo e as demais seções dele.
  */
 export function ModuleNavigationProvider({ children }: { children: React.ReactNode }) {
   const { navigation, isLoading } = useCurrentUser();
@@ -32,7 +35,15 @@ export function ModuleNavigationProvider({ children }: { children: React.ReactNo
 
   const { activeModule, selectModule } = useActiveModule(modules);
 
-  const cadastros = React.useMemo(() => filterSection(SHARED_CADASTROS, navigation), [navigation]);
+  const cadastros = React.useMemo(
+    () => filterSection(cadastrosDoModulo(activeModule?.cadastros), navigation),
+    [activeModule, navigation]
+  );
+
+  const todosCadastros = React.useMemo(
+    () => filterSection({ kind: "cadastros", items: CADASTROS }, navigation),
+    [navigation]
+  );
 
   const sections = React.useMemo(
     () =>
@@ -44,8 +55,8 @@ export function ModuleNavigationProvider({ children }: { children: React.ReactNo
   );
 
   const value = React.useMemo(
-    () => ({ modules, activeModule, selectModule, cadastros, sections, isLoading }),
-    [modules, activeModule, selectModule, cadastros, sections, isLoading]
+    () => ({ modules, activeModule, selectModule, cadastros, todosCadastros, sections, isLoading }),
+    [modules, activeModule, selectModule, cadastros, todosCadastros, sections, isLoading]
   );
 
   return (

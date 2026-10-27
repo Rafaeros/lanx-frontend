@@ -61,6 +61,7 @@
   --module-compras: #ca8a04;
   --module-producao: #ea580c;
   --module-comercial: #dc2626;
+  --module-qualidade: #0d9488;
   --module-estoque: #c2410c;
   --module-financeiro: #2563eb;
   --module-administracao: #be123c;
@@ -99,6 +100,7 @@
   --module-compras: #facc15;
   --module-producao: #fb923c;
   --module-comercial: #f87171;
+  --module-qualidade: #2dd4bf;
   --module-estoque: #fdba74;
   --module-financeiro: #60a5fa;
   --module-administracao: #fb7185;
@@ -197,6 +199,16 @@ body {
 
 .animate-fade-in {
   animation: fade-in 160ms ease-out;
+}
+
+/* Barra de progresso sem percentual (consultas longas, ex.: carteira do ERP) */
+@keyframes indeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(300%); }
+}
+
+.animate-indeterminate {
+  animation: indeterminate 1.6s ease-in-out infinite;
 }
 
 /* Landing: revelação ao entrar na tela (componente <Reveal>) */

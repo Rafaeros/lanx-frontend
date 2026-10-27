@@ -1,6 +1,13 @@
 import type { LucideIcon } from "lucide-react";
 
-export type ModuleId = "compras" | "producao" | "comercial" | "estoque" | "financeiro" | "administracao";
+export type ModuleId =
+  | "compras"
+  | "producao"
+  | "comercial"
+  | "qualidade"
+  | "estoque"
+  | "financeiro"
+  | "administracao";
 
 /** "available": já tem telas; "soon": aparece na navegação, mas ainda está por vir. */
 export type AvailabilityStatus = "available" | "soon";
@@ -30,5 +37,7 @@ export interface ModuleDefinition {
   status: AvailabilityStatus;
   /** Quando definido, o módulo só aparece se o backend liberar essa funcionalidade ao usuário. */
   featureKey?: string;
+  /** Ids do catálogo de cadastros (config/cadastros.ts) que aparecem neste módulo, nessa ordem. */
+  cadastros?: string[];
   sections: NavSection[];
 }

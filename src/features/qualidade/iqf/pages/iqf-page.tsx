@@ -6,10 +6,13 @@ import { useDebounce } from "@/shared/hooks/use-debounce";
 import { usePagination } from "@/shared/hooks/use-pagination";
 import { getApiErrorMessage } from "@/shared/lib/api-error";
 import { paginate } from "@/shared/lib/pagination";
-import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
+import { IntervaloDatasInput } from "@/shared/components/ui/intervalo-datas";
 import { MultiSelect } from "@/shared/components/ui/multi-select";
+import { Segmented } from "@/shared/components/ui/segmented";
+import { rateioOptions } from "@/features/compras/shared/rateios";
+import { RateiosSelecionados } from "@/features/compras/shared/components/rateios-selecionados";
 import { PageHeader } from "@/shared/components/ui/page-header";
 import { PageShell } from "@/shared/components/ui/page-shell";
 import { useToast } from "@/shared/components/ui/toast";
@@ -29,7 +32,7 @@ import {
 } from "../lib/classificacao";
 import { ToleranciaInput } from "../components/tolerancia-input";
 import { hojeIso } from "@/shared/lib/date";
-import { PRESETS, periodoDoPreset, presetDoPeriodo } from "../lib/periodo";
+import { PRESETS, periodoDoPreset, presetDoPeriodo } from "@/shared/lib/periodo";
 
 const FAIXAS: (FaixaIqf | "")[] = ["", "A", "B", "C"];
 type Visao = "tabela" | "grafico";
@@ -39,40 +42,6 @@ function porIqfCrescente(a: IqfFornecedorResponse, b: IqfFornecedorResponse) {
   const pa = a.percentualNoPrazo ?? Number.POSITIVE_INFINITY;
   const pb = b.percentualNoPrazo ?? Number.POSITIVE_INFINITY;
   return pa - pb || b.entregasAvaliadas - a.entregasAvaliadas || a.fornecedor.localeCompare(b.fornecedor);
-}
-
-function Segmented<T extends string>({
-  label,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  options: { id: T; label: React.ReactNode }[];
-  value: T | null;
-  onChange: (value: T) => void;
-}) {
-  return (
-    <div role="radiogroup" aria-label={label} className="flex h-9 rounded-lg border border-border bg-card p-0.5">
-      {options.map((o) => (
-        <button
-          key={o.id}
-          type="button"
-          role="radio"
-          aria-checked={value === o.id}
-          onClick={() => onChange(o.id)}
-          className={cn(
-            "inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-md px-3 text-xs font-medium transition-colors",
-            value === o.id
-              ? "bg-brand-gradient text-primary-foreground shadow-sm"
-              : "text-muted-foreground hover:bg-muted hover:text-foreground"
-          )}
-        >
-          {o.label}
-        </button>
-      ))}
-    </div>
-  );
 }
 
 export function IqfPage() {
@@ -167,7 +136,7 @@ export function IqfPage() {
               <RefreshCw className={`h-4 w-4 ${iqf.isFetching ? "animate-spin" : ""}`} />
               <span className="hidden sm:inline">Atualizar</span>
             </Button>
-            <PermissionGate permission="compras.iqf:exportar">
+            <PermissionGate permission="qualidade.iqf:exportar">
               <div className="flex">
                 <Button
                   variant="outline"
@@ -201,48 +170,34 @@ export function IqfPage() {
       {/* Filtros que mudam o cálculo: período, rateios e tolerância de atraso */}
       <section className="space-y-3 rounded-xl border border-border bg-card p-4 sm:p-5">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end">
-          <div className="space-y-1.5">
+          <div className="min-w-0 space-y-1.5">
             <span className="block text-xs font-medium text-muted-foreground">Período (previsão de entrega)</span>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-col gap-2 md:flex-row md:items-center">
               <div className="overflow-x-auto">
                 <Segmented
                   label="Período rápido"
                   options={PRESETS}
                   value={presetAtivo}
                   onChange={(id) => setPeriodo(periodoDoPreset(id))}
+                  stretch
+                  className="w-full min-w-max md:w-auto"
                 />
               </div>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="date"
-                  aria-label="Entrega prevista de"
-                  value={periodo.dataInicio}
-                  max={periodo.dataFim || undefined}
-                  onChange={(e) => setPeriodo((p) => ({ ...p, dataInicio: e.target.value }))}
-                  className="h-9 w-36 text-xs"
-                  error={periodoInvalido ? " " : undefined}
-                  showErrorMessage={false}
-                />
-                <span className="text-xs text-muted-foreground">até</span>
-                <Input
-                  type="date"
-                  aria-label="Entrega prevista até"
-                  value={periodo.dataFim}
-                  min={periodo.dataInicio || undefined}
-                  onChange={(e) => setPeriodo((p) => ({ ...p, dataFim: e.target.value }))}
-                  className="h-9 w-36 text-xs"
-                  error={periodoInvalido ? " " : undefined}
-                  showErrorMessage={false}
-                />
-              </div>
+              <IntervaloDatasInput
+                value={periodo}
+                onChange={setPeriodo}
+                invalido={periodoInvalido}
+                labelInicio="Entrega prevista de"
+                labelFim="Entrega prevista até"
+              />
             </div>
           </div>
 
-          <div className="min-w-0 flex-1 space-y-1.5 xl:min-w-56 xl:max-w-sm">
+          <div className="min-w-0 flex-1 space-y-1.5 xl:min-w-56">
             <span className="block text-xs font-medium text-muted-foreground">Rateios</span>
             <MultiSelect
               aria-label="Filtrar por rateios"
-              options={rateiosQuery.data ?? []}
+              options={rateioOptions(rateiosQuery.data)}
               value={rateios}
               onChange={setRateios}
               isLoading={rateiosQuery.isLoading}
@@ -259,33 +214,7 @@ export function IqfPage() {
           </div>
         </div>
 
-        {rateios.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5">
-            {rateios.map((r) => (
-              <span
-                key={r}
-                className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 py-0.5 pl-2.5 pr-1 text-[11px] font-medium text-primary"
-              >
-                {r}
-                <button
-                  type="button"
-                  aria-label={`Remover rateio ${r}`}
-                  onClick={() => setRateios((list) => list.filter((x) => x !== r))}
-                  className="cursor-pointer rounded-full p-0.5 hover:bg-primary/20"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </span>
-            ))}
-            <button
-              type="button"
-              onClick={() => setRateios([])}
-              className="cursor-pointer px-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground"
-            >
-              Limpar rateios
-            </button>
-          </div>
-        )}
+        <RateiosSelecionados value={rateios} onChange={setRateios} rateios={rateiosQuery.data} />
 
         {periodoInvalido ? (
           <p className="text-xs font-medium text-danger">A data inicial precisa ser anterior ou igual à final.</p>
@@ -313,11 +242,13 @@ export function IqfPage() {
       <IqfResumo iqf={periodoInvalido ? undefined : iqf.data} isLoading={iqf.isLoading} />
 
       {/* Alternância de visão + filtros que só valem para a tabela de fornecedores */}
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <Segmented<Visao>
           label="Visualização"
           value={visao}
           onChange={setVisao}
+          stretch
+          className="w-full shrink-0 lg:w-auto"
           options={[
             { id: "tabela", label: <><Table2 className="h-4 w-4" />Fornecedores</> },
             { id: "grafico", label: <><ChartColumnBig className="h-4 w-4" />Gráfico mensal</> },
@@ -325,35 +256,42 @@ export function IqfPage() {
         />
 
         {visao === "tabela" && (
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <Input
-              aria-label="Buscar fornecedor"
-              placeholder="Buscar fornecedor"
-              value={buscaInput}
-              onChange={(e) => setBuscaInput(e.target.value)}
-              leftIcon={<Search className="h-4 w-4" />}
-              className="h-9 sm:w-64"
-            />
-            <Segmented<FaixaIqf | "">
-              label="Faixa"
-              value={faixa}
-              onChange={setFaixa}
-              options={FAIXAS.map((f) => ({ id: f, label: f ? `Faixa ${f}` : "Todas" }))}
-            />
-            {temFiltroTabela && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setBuscaInput("");
-                  setFaixa("");
-                }}
-                className="h-9 text-muted-foreground"
-              >
-                <X className="h-4 w-4" />
-                Limpar
-              </Button>
-            )}
+          <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center">
+            <div className="min-w-0 flex-1">
+              <Input
+                aria-label="Buscar fornecedor"
+                placeholder="Buscar fornecedor"
+                value={buscaInput}
+                onChange={(e) => setBuscaInput(e.target.value)}
+                leftIcon={<Search className="h-4 w-4" />}
+                className="h-9"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Segmented<FaixaIqf | "">
+                label="Faixa"
+                value={faixa}
+                onChange={setFaixa}
+                stretch
+                className="w-full sm:w-auto"
+                options={FAIXAS.map((f) => ({ id: f, label: f ? `Faixa ${f}` : "Todas" }))}
+              />
+              {temFiltroTabela && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setBuscaInput("");
+                    setFaixa("");
+                  }}
+                  className="h-9 shrink-0 text-muted-foreground"
+                  title="Limpar busca e faixa"
+                >
+                  <X className="h-4 w-4" />
+                  <span className="hidden sm:inline">Limpar</span>
+                </Button>
+              )}
+            </div>
           </div>
         )}
       </div>

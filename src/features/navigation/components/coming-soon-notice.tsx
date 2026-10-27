@@ -9,8 +9,8 @@ export function ComingSoonNotice({ module }: { module: ModuleDefinition }) {
         {module.label} ainda está por vir
       </div>
       <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-        As telas deste módulo estão em desenvolvimento. Enquanto isso, os cadastros continuam
-        disponíveis acima.
+        As telas deste módulo estão em desenvolvimento. Enquanto isso, troque de módulo pelo
+        seletor acima.
       </p>
     </div>
   );

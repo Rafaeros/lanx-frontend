@@ -20,7 +20,7 @@ const dataLonga = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "nume
 /** Tela inicial após o login: visão geral do acesso do usuário e atalhos para todas as telas liberadas. */
 export function AppHomePage() {
   const { user, navigation } = useCurrentUser();
-  const { modules, selectModule, cadastros } = useModuleNavigation();
+  const { modules, selectModule, todosCadastros: cadastros } = useModuleNavigation();
   const openModule = useOpenModule(selectModule);
 
   const agora = new Date();
@@ -108,7 +108,7 @@ export function AppHomePage() {
 
       {cadastros.items.length > 0 && (
         <section aria-labelledby="cadastros-title" className="space-y-3">
-          <SectionTitle id="cadastros-title" title="Cadastros" hint="Compartilhados entre todos os módulos" />
+          <SectionTitle id="cadastros-title" title="Cadastros" hint="Dados mestres usados pelos módulos" />
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {cadastros.items.map((item) => {
               const Icon = item.icon;

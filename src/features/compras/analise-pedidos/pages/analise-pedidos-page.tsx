@@ -24,7 +24,7 @@ import { mesAtual } from "../lib/periodo";
 
 function filtrosIniciais(): AnaliseFiltrosValue {
   const { inicio, fim } = mesAtual();
-  return { dataInicio: inicio, dataFim: fim, busca: "", situacao: "" };
+  return { dataInicio: inicio, dataFim: fim, busca: "", situacao: "", rateios: [] };
 }
 
 export function AnalisePedidosPage() {
@@ -35,8 +35,15 @@ export function AnalisePedidosPage() {
 
   const periodoInvalido = !filtros.dataInicio || !filtros.dataFim || filtros.dataInicio > filtros.dataFim;
   const filtro: AnalisePedidosFiltro = React.useMemo(
-    () => ({ dataInicio: filtros.dataInicio, dataFim: filtros.dataFim, busca, situacao: filtros.situacao }),
-    [filtros.dataInicio, filtros.dataFim, filtros.situacao, busca]
+    () => ({
+      dataInicio: filtros.dataInicio,
+      dataFim: filtros.dataFim,
+      busca,
+      situacao: filtros.situacao,
+      // ordenado para a chave do cache não mudar com a ordem dos cliques
+      rateios: [...filtros.rateios].sort(),
+    }),
+    [filtros.dataInicio, filtros.dataFim, filtros.situacao, filtros.rateios, busca]
   );
 
   const itens = useAnalisePedidosQuery(filtro, page, size, !periodoInvalido);
@@ -68,8 +75,8 @@ export function AnalisePedidosPage() {
 
   const emptyMessage = itens.isError
     ? getApiErrorMessage(itens.error, "Não foi possível carregar os pedidos.")
-    : filtros.busca || filtros.situacao
-      ? "Nenhum pedido com esses filtros. Tente limpar a busca ou a situação."
+    : filtros.busca || filtros.situacao || filtros.rateios.length
+      ? "Nenhum pedido com esses filtros. Tente limpar a busca, a situação ou os rateios."
       : "Nenhum pedido emitido no período. Ajuste as datas ou importe os pedidos do ERP.";
 
   const refresh = () => {
@@ -123,7 +130,7 @@ export function AnalisePedidosPage() {
       <AnaliseFiltros
         value={filtros}
         onChange={setFiltros}
-        onClear={() => setFiltros((f) => ({ ...f, busca: "", situacao: "" }))}
+        onClear={() => setFiltros((f) => ({ ...f, busca: "", situacao: "", rateios: [] }))}
         periodoInvalido={periodoInvalido}
       />
 

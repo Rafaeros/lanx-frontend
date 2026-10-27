@@ -11,6 +11,7 @@ import {
   formatPercentual,
   tomDoMes,
 } from "../lib/classificacao";
+import { rateiosTexto } from "@/features/compras/shared/rateios";
 import { IqfMensalChart } from "./iqf-mensal-chart";
 
 export interface IqfRelatorioImpressaoProps {
@@ -68,7 +69,7 @@ export function IqfRelatorioImpressao({ iqf, fornecedores, filtrosTabela, onDone
           <h1 className="font-display text-xl font-semibold">IQF de fornecedores (prazo de entrega)</h1>
           <p className="text-muted-foreground">
             Entrega prevista de {formatData(iqf.dataInicio)} a {formatData(iqf.dataFim)} ·{" "}
-            {iqf.rateios.length ? `Rateios: ${iqf.rateios.join(", ")}` : "Todos os rateios"} · Tolerância de
+            {rateiosTexto(iqf.rateios)} · Tolerância de
             atraso: {diasTexto(iqf.toleranciaDias)}
             {filtrosTabela ? ` · ${filtrosTabela}` : ""}
           </p>

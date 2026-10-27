@@ -45,21 +45,22 @@ export function Checkbox({
           "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
           isOn
             ? "border-primary bg-primary/10 text-primary"
-            : "border-dashed border-primary/40 text-muted-foreground enabled:hover:border-primary enabled:hover:text-foreground",
+            : "border-dashed border-muted-foreground/50 text-muted-foreground enabled:hover:border-primary enabled:hover:text-foreground",
         ],
         className
       )}
     >
       <span
         className={cn(
-          "flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors",
+          "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-[1.5px] transition-colors",
           isOn
             ? "border-primary bg-brand-gradient text-primary-foreground"
-            : "border-border bg-card group-enabled:group-hover:border-primary/60"
+            : // a borda padrão (--card-border) some no fundo branco: usa o cinza do texto secundário
+              "border-muted-foreground/60 bg-card group-enabled:group-hover:border-primary"
         )}
       >
-        {checked === true && <Check className="h-3 w-3" strokeWidth={3} />}
-        {checked === "mixed" && <Minus className="h-3 w-3" strokeWidth={3} />}
+        {checked === true && <Check className="h-3.5 w-3.5" strokeWidth={3} />}
+        {checked === "mixed" && <Minus className="h-3.5 w-3.5" strokeWidth={3} />}
       </span>
       {icon}
       {label}

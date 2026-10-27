@@ -11,10 +11,14 @@ export interface PageShellProps {
   children: React.ReactNode;
 }
 
-/** Contêiner padrão das telas internas: empilha cabeçalho, filtros e conteúdo com o mesmo espaçamento. */
+/**
+ * Contêiner padrão das telas internas: empilha cabeçalho, filtros e conteúdo com o mesmo espaçamento.
+ * Sem `fill`, não encolhe: a página fica com a altura do conteúdo e o <main> rola (senão a tabela era
+ * espremida até a altura da tela e a paginação saía cortada).
+ */
 export function PageShell({ fill, className, children }: PageShellProps) {
   return (
-    <div className={cn("flex w-full flex-col gap-4 lg:gap-5", fill && "lg:h-full lg:min-h-0", className)}>
+    <div className={cn("flex w-full flex-col gap-4 lg:gap-5", fill ? "lg:h-full lg:min-h-0" : "shrink-0 pb-2", className)}>
       {children}
     </div>
   );

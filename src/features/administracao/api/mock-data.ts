@@ -42,7 +42,27 @@ export const MOCK_FEATURES: FeatureNode[] = [
         permissions: report("compras.analise-pedidos", ["exportar", "importar"]),
         children: [],
       },
-      { key: "compras.iqf", label: "IQF de Fornecedores", permissions: report("compras.iqf", ["exportar"]), children: [] },
+    ],
+  },
+  {
+    key: "comercial",
+    label: "Comercial",
+    permissions: crud("comercial"),
+    children: [
+      {
+        key: "comercial.carteira",
+        label: "Carteira de pedidos",
+        permissions: report("comercial.carteira", ["exportar"]),
+        children: [],
+      },
+    ],
+  },
+  {
+    key: "qualidade",
+    label: "Qualidade",
+    permissions: crud("qualidade"),
+    children: [
+      { key: "qualidade.iqf", label: "IQF de Fornecedores", permissions: report("qualidade.iqf", ["exportar"]), children: [] },
     ],
   },
 ];

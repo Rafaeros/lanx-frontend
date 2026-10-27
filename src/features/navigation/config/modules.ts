@@ -1,6 +1,9 @@
 import {
+  BadgeCheck,
   Cable,
   ChartColumn,
+  ClipboardCheck,
+  ClipboardList,
   Factory,
   Gauge,
   Handshake,
@@ -25,9 +28,10 @@ export const MODULES: ModuleDefinition[] = [
     icon: ShoppingCart,
     status: "available",
     featureKey: "compras",
+    cadastros: ["cadastros.fornecedores", "cadastros.compradores", "cadastros.materiais", "cadastros.rateios"],
     sections: [
       {
-        kind: "relatorios",
+        kind: "operacoes",
         items: [
           {
             id: "compras.analise-pedidos",
@@ -35,13 +39,6 @@ export const MODULES: ModuleDefinition[] = [
             to: "/compras/analise-pedidos",
             icon: ChartColumn,
             featureKey: "compras.analise-pedidos",
-          },
-          {
-            id: "compras.iqf",
-            label: "IQF de fornecedores",
-            to: "/compras/iqf",
-            icon: Gauge,
-            featureKey: "compras.iqf",
           },
         ],
       },
@@ -54,10 +51,18 @@ export const MODULES: ModuleDefinition[] = [
     icon: Factory,
     status: "available",
     featureKey: "producao",
+    cadastros: ["cadastros.operadores", "cadastros.materiais", "cadastros.unidade-medida"],
     sections: [
       {
         kind: "operacoes",
         items: [
+          {
+            id: "producao.ordens-producao",
+            label: "Ordens de produção",
+            to: "/producao/ordens-de-producao",
+            icon: ClipboardCheck,
+            featureKey: "producao.ordens-producao",
+          },
           {
             id: "producao.comunizado",
             label: "Comunizado",
@@ -72,10 +77,47 @@ export const MODULES: ModuleDefinition[] = [
   {
     id: "comercial",
     label: "Comercial",
-    description: "Clientes, orçamentos e vendas",
+    description: "Clientes, carteira de pedidos e vendas",
     icon: Handshake,
-    status: "soon",
-    sections: [],
+    status: "available",
+    featureKey: "comercial",
+    cadastros: ["cadastros.clientes", "cadastros.materiais"],
+    sections: [
+      {
+        kind: "relatorios",
+        items: [
+          {
+            id: "comercial.carteira",
+            label: "Carteira de pedidos",
+            to: "/comercial/carteira",
+            icon: ClipboardList,
+            featureKey: "comercial.carteira",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "qualidade",
+    label: "Qualidade",
+    description: "IQF de fornecedores e não conformidades",
+    icon: BadgeCheck,
+    status: "available",
+    featureKey: "qualidade",
+    sections: [
+      {
+        kind: "relatorios",
+        items: [
+          {
+            id: "qualidade.iqf",
+            label: "IQF de fornecedores",
+            to: "/qualidade/iqf",
+            icon: Gauge,
+            featureKey: "qualidade.iqf",
+          },
+        ],
+      },
+    ],
   },
   {
     id: "estoque",
@@ -100,6 +142,7 @@ export const MODULES: ModuleDefinition[] = [
     icon: ShieldCheck,
     status: "available",
     featureKey: "administracao",
+    cadastros: ["cadastros.departamentos"],
     sections: [
       {
         kind: "acesso",

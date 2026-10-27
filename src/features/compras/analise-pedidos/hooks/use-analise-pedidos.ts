@@ -22,6 +22,15 @@ export function useResumoAnalisePedidosQuery(filtro: AnalisePedidosFiltro, enabl
   });
 }
 
+/** Rateios mudam só quando há importação (que invalida a chave raiz): cache longo. */
+export function useAnaliseRateiosQuery() {
+  return useQuery({
+    queryKey: [KEY, "rateios"],
+    queryFn: analisePedidosApi.rateios,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 export function useImportarPedidosMutation() {
   const queryClient = useQueryClient();
   return useMutation({

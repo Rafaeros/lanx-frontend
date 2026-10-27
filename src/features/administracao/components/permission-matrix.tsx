@@ -35,6 +35,11 @@ const EXTRA_ICONS: Record<string, React.ReactNode> = {
   exportar: <Download className="h-3.5 w-3.5" aria-hidden />,
 };
 
+/** Id da seção de um módulo na matriz (o resumo do perfil rola até ela). */
+export function moduloAncora(key: string): string {
+  return `permissoes-${key}`;
+}
+
 function selectionState(codes: string[], selected: Set<string>): boolean | "mixed" {
   const count = codes.filter((c) => selected.has(c)).length;
   if (count === 0) return false;
@@ -87,7 +92,7 @@ export function PermissionMatrix({ features, value, onChange, disabled }: Permis
   return (
     <div className="space-y-4">
       {/* Barra fixa no topo da área rolável: busca + resumo + ações em massa */}
-      <div className="sticky top-0 z-10 -mx-1 flex flex-col gap-3 bg-card px-1 py-3 sm:flex-row sm:items-center">
+      <div className="sticky top-0 z-10 -mx-1 flex flex-col gap-3 bg-background/95 px-1 py-3 backdrop-blur sm:flex-row sm:items-center">
         <div className="sm:max-w-xs sm:flex-1">
           <label htmlFor={searchId} className="sr-only">
             Buscar funcionalidade
@@ -162,8 +167,9 @@ export function PermissionMatrix({ features, value, onChange, disabled }: Permis
         return (
           <section
             key={module.key}
+            id={moduloAncora(module.key)}
             aria-labelledby={headingId}
-            className="overflow-hidden rounded-xl border border-border bg-card shadow-sm"
+            className="scroll-mt-20 overflow-hidden rounded-xl border border-border bg-card shadow-sm"
           >
             <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-muted/50 px-5 py-3">
               <div className="flex items-center gap-3">

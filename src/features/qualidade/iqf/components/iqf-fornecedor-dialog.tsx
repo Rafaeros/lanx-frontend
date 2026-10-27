@@ -15,6 +15,7 @@ import {
   formatPercentual,
 } from "../lib/classificacao";
 import { IqfMensalPainel } from "./iqf-mensal-painel";
+import { rateiosTexto } from "@/features/compras/shared/rateios";
 
 export interface IqfFornecedorDialogProps {
   /** Fornecedor da linha clicada; `null` fecha o modal. */
@@ -33,7 +34,8 @@ export function IqfFornecedorDialog({ fornecedor, filtro, onClose }: IqfForneced
 
   const contexto = [
     `Entrega prevista de ${formatData(filtro.dataInicio)} a ${formatData(filtro.dataFim)}`,
-    filtro.rateios.length ? `Rateios: ${filtro.rateios.join(", ")}` : "Todos os rateios",
+    // nomes vêm da resposta; até ela chegar, só a quantidade
+    iqf ? rateiosTexto(iqf.rateios) : filtro.rateios.length ? `${filtro.rateios.length} rateio(s)` : "Todos os rateios",
     `Tolerância de atraso: ${diasTexto(filtro.toleranciaDias)}`,
   ].join(" · ");
 

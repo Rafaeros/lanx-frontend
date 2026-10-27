@@ -19,6 +19,18 @@ export interface AnaliseUnidadeMedidaResumo {
   sigla: string;
 }
 
+/** Comprador normalizado em cadastros.compradores. */
+export interface AnaliseCompradorResumo {
+  id: string;
+  nome: string;
+}
+
+/** Rateio normalizado em cadastros.rateios. */
+export interface AnaliseRateioResumo {
+  id: string;
+  nome: string;
+}
+
 export interface AnalisePedidoResponse {
   id?: string;
   requisicaoDeCompra?: string;
@@ -26,7 +38,8 @@ export interface AnalisePedidoResponse {
   dataEmissaoRc?: string;
   dataPrevisaoEntregaRc?: string;
   pedidoDeCompra?: string;
-  comprador?: string;
+  /** Ausente quando o item veio do ERP sem comprador. */
+  comprador?: AnaliseCompradorResumo | null;
   dataEmissaoPc?: string;
   dataPrevisaoEntregaPc?: string;
   dataEntregaPc?: string;
@@ -51,7 +64,8 @@ export interface AnalisePedidoResponse {
   recebimento?: string;
   notaFiscal?: string;
   quantidadeRecebimentos?: number;
-  rateio?: string;
+  /** Ausente quando o item veio do ERP sem rateio. */
+  rateio?: AnaliseRateioResumo | null;
   referencia?: string;
   invoice?: string;
   responsavelCompras?: string;
@@ -66,6 +80,8 @@ export interface AnalisePedidosFiltro {
   dataFim: string;
   busca?: string;
   situacao?: SituacaoPedido | "";
+  /** Ids dos rateios (cadastros.rateios); vazio = todos. */
+  rateios?: string[];
 }
 
 export interface ResumoAnalisePedidosResponse {

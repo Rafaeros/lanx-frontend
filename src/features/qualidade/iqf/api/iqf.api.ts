@@ -9,6 +9,7 @@ import type {
 } from "../types";
 import { env } from "@/config/env";
 import { rethrowBlobError, saveBlobResponse } from "@/shared/lib/download";
+import type { RateioFiltro } from "@/features/compras/shared/rateios";
 
 /** Mesma regra do backend (domain.ClassificacaoIqf), usada apenas no fallback mock. */
 function classificar(percentual: number | null): ClassificacaoIqfResponse | null {
@@ -29,7 +30,12 @@ const MOCK_FORNECEDORES: [string, string, number, number][] = [
   ["mock-fornecedor-4", "Parafusos Brasil Ltda", 0, 0],
 ];
 
-const MOCK_RATEIOS = ["MATERIA-PRIMA", "MATERIAL DE USO E CONSUMO", "MATERIAL DE ESCRITÓRIO", "FERRAMENTAS"];
+const MOCK_RATEIOS: RateioFiltro[] = [
+  { id: "r-001", nome: "MATERIA-PRIMA" },
+  { id: "r-002", nome: "MATERIAL DE USO E CONSUMO" },
+  { id: "r-003", nome: "MATERIAL DE ESCRITÓRIO" },
+  { id: "r-004", nome: "FERRAMENTAS" },
+];
 
 /** Todos os meses ("YYYY-MM") entre as duas datas, inclusive. */
 function mesesEntre(dataInicio: string, dataFim: string): string[] {
@@ -68,7 +74,7 @@ function mockIqf({ dataInicio, dataFim, rateios, toleranciaDias }: IqfFiltro): I
     percentualNoPrazo: geral,
     classificacao: classificar(geral),
     fornecedores,
-    rateios,
+    rateios: MOCK_RATEIOS.filter((r) => rateios.includes(r.id)),
     toleranciaDias,
     meses: mesesEntre(dataInicio, dataFim).map((mes, i): IqfMesResponse => {
       const avaliadas = 6 + ((i * 7) % 5);
@@ -88,7 +94,7 @@ function mockIqf({ dataInicio, dataFim, rateios, toleranciaDias }: IqfFiltro): I
   };
 }
 
-/** rateios=A&rateios=B (sem colchetes), que é o que o Spring entende como lista. */
+/** rateios=id1&rateios=id2 (sem colchetes), que é o que o Spring entende como lista. */
 function params({ dataInicio, dataFim, rateios, toleranciaDias }: IqfFiltro) {
   const search = new URLSearchParams({ dataInicio, dataFim, toleranciaDias: String(toleranciaDias) });
   rateios.forEach((r) => search.append("rateios", r));
@@ -96,10 +102,10 @@ function params({ dataInicio, dataFim, rateios, toleranciaDias }: IqfFiltro) {
 }
 
 export const iqfApi = {
-  /** GET /compras/relatorios/iqf: IQF de prazo geral e por fornecedor, pelas entregas previstas no período. */
+  /** GET /qualidade/relatorios/iqf: IQF de prazo geral e por fornecedor, pelas entregas previstas no período. */
   consultar: async (filtro: IqfFiltro): Promise<IqfResponse> => {
     try {
-      const response = await apiClient.get<ApiResponse<IqfResponse>>("/compras/relatorios/iqf", {
+      const response = await apiClient.get<ApiResponse<IqfResponse>>("/qualidade/relatorios/iqf", {
         params: params(filtro),
       });
       return response.data.data;
@@ -109,11 +115,11 @@ export const iqfApi = {
     }
   },
 
-  /** GET /compras/relatorios/iqf/fornecedores/{id}: o mesmo cálculo só com as entregas do fornecedor. */
+  /** GET /qualidade/relatorios/iqf/fornecedores/{id}: o mesmo cálculo só com as entregas do fornecedor. */
   consultarFornecedor: async (fornecedorId: string, filtro: IqfFiltro): Promise<IqfResponse> => {
     try {
       const response = await apiClient.get<ApiResponse<IqfResponse>>(
-        `/compras/relatorios/iqf/fornecedores/${encodeURIComponent(fornecedorId)}`,
+        `/qualidade/relatorios/iqf/fornecedores/${encodeURIComponent(fornecedorId)}`,
         { params: params(filtro) }
       );
       return response.data.data;
@@ -131,10 +137,10 @@ export const iqfApi = {
     }
   },
 
-  /** GET /compras/relatorios/iqf/rateios: rateios dos itens importados, para o filtro. */
-  rateios: async (): Promise<string[]> => {
+  /** GET /qualidade/relatorios/iqf/rateios: rateios (id e nome) dos itens importados, para o filtro. */
+  rateios: async (): Promise<RateioFiltro[]> => {
     try {
-      const response = await apiClient.get<ApiResponse<string[]>>("/compras/relatorios/iqf/rateios");
+      const response = await apiClient.get<ApiResponse<RateioFiltro[]>>("/qualidade/relatorios/iqf/rateios");
       return response.data.data;
     } catch (error) {
       if (env.VITE_ENABLE_MOCK_FALLBACK) return MOCK_RATEIOS;
@@ -142,10 +148,10 @@ export const iqfApi = {
     }
   },
 
-  /** GET /compras/relatorios/iqf/exportar: baixa a planilha (.xlsx) com o gráfico mensal. */
+  /** GET /qualidade/relatorios/iqf/exportar: baixa a planilha (.xlsx) com o gráfico mensal. */
   exportar: async (filtro: IqfFiltro): Promise<void> => {
     const response = await apiClient
-      .get<Blob>("/compras/relatorios/iqf/exportar", {
+      .get<Blob>("/qualidade/relatorios/iqf/exportar", {
         params: params(filtro),
         responseType: "blob",
         timeout: 120000,

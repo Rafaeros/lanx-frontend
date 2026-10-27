@@ -1,12 +1,10 @@
-import { IqfPage } from "@/features/compras/iqf";
+import { redirect } from "react-router";
 
-export function meta() {
-  return [
-    { title: "IQF de Fornecedores - LANX" },
-    { name: "description", content: "Índice de qualidade de fornecedores pelo cumprimento de prazos de entrega" },
-  ];
+/** O IQF passou para o módulo Qualidade: o endereço antigo continua funcionando (favoritos, links). */
+export function clientLoader() {
+  return redirect("/qualidade/iqf");
 }
 
-export default function IqfRoute() {
-  return <IqfPage />;
+export default function IqfAntigoRoute() {
+  return null;
 }

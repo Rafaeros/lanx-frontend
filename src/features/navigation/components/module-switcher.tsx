@@ -55,7 +55,7 @@ export function ModuleSwitcher({ modules, activeModuleId, onSelect }: ModuleSwit
           className={cn(
             "absolute z-50 rounded-2xl border border-border bg-card p-3 shadow-xl animate-fade-in",
             "left-3 right-3 top-[calc(100%+0.5rem)]",
-            "lg:left-[calc(100%+0.75rem)] lg:right-auto lg:top-0 lg:w-[26rem]"
+            "lg:left-[calc(100%+1.25rem)] lg:right-auto lg:top-0 lg:w-[26rem]"
           )}
         >
           <div className="px-1 pb-3">

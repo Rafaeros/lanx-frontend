@@ -53,7 +53,7 @@ export function PedidoDetalhesDialog({
 
           <Grupo titulo="Pedido e entrega">
             <Campo label="Fornecedor">{p.fornecedor?.nome}</Campo>
-            <Campo label="Comprador">{p.comprador}</Campo>
+            <Campo label="Comprador">{p.comprador?.nome}</Campo>
             <Campo label="País">{p.fornecedor?.pais}</Campo>
             <Campo label="Emissão do PC">{formatDateBR(p.dataEmissaoPc)}</Campo>
             <Campo label="Previsão de entrega">{formatDateBR(p.dataPrevisaoEntregaPc)}</Campo>
@@ -66,6 +66,7 @@ export function PedidoDetalhesDialog({
             </Campo>
             <Campo label="Lead time">{p.leadTimeDias != null ? `${p.leadTimeDias} dias` : "-"}</Campo>
             <Campo label="Local">{p.local}</Campo>
+            <Campo label="Rateio">{p.rateio?.nome}</Campo>
           </Grupo>
 
           <Grupo titulo="Financeiro e fiscal">

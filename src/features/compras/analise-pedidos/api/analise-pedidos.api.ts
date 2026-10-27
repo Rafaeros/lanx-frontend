@@ -10,6 +10,7 @@ import { env } from "@/config/env";
 import { rethrowBlobError, saveBlobResponse } from "@/shared/lib/download";
 import { paginate } from "@/shared/lib/pagination";
 import { situacaoDe } from "../lib/situacao";
+import type { RateioFiltro } from "../../shared/rateios";
 
 const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
   {
@@ -19,7 +20,7 @@ const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
     dataEmissaoRc: "2026-10-01",
     dataPrevisaoEntregaRc: "2026-10-20",
     pedidoDeCompra: "PC-99120",
-    comprador: "Mariana Silva",
+    comprador: { id: "mock-comprador-1", nome: "Mariana Silva" },
     dataEmissaoPc: "2026-10-03",
     dataPrevisaoEntregaPc: "2026-10-22",
     dataEntregaPc: "2026-10-18",
@@ -41,7 +42,7 @@ const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
     recebimento: "REC-4412",
     notaFiscal: "NF-89211",
     quantidadeRecebimentos: 1,
-    rateio: "Manutenção Industrial",
+    rateio: { id: "mock-rateio-2", nome: "Manutenção Industrial" },
     referencia: "Obra 04",
     invoice: "INV-998",
     responsavelCompras: "Mariana Silva",
@@ -54,7 +55,7 @@ const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
     dataEmissaoRc: "2026-10-05",
     dataPrevisaoEntregaRc: "2026-10-25",
     pedidoDeCompra: "PC-99145",
-    comprador: "Mariana Silva",
+    comprador: { id: "mock-comprador-3", nome: "Mariana Silva" },
     dataEmissaoPc: "2026-10-06",
     dataPrevisaoEntregaPc: "2026-10-24",
     fornecedor: { id: "mock-fornecedor-2", nome: "Valvtech Componentes Ltda", pais: "Brasil" },
@@ -75,7 +76,7 @@ const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
     recebimento: "REC-4430",
     notaFiscal: "NF-12004",
     quantidadeRecebimentos: 1,
-    rateio: "Operação Contínua",
+    rateio: { id: "mock-rateio-4", nome: "Operação Contínua" },
     referencia: "Linha de Produção B",
     invoice: "INV-1004",
     responsavelCompras: "Mariana Silva",
@@ -88,7 +89,7 @@ const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
     dataEmissaoRc: "2026-10-08",
     dataPrevisaoEntregaRc: "2026-10-30",
     pedidoDeCompra: "PC-99180",
-    comprador: "Mariana Silva",
+    comprador: { id: "mock-comprador-5", nome: "Mariana Silva" },
     dataEmissaoPc: "2026-10-10",
     dataPrevisaoEntregaPc: "2026-10-28",
     fornecedor: { id: "mock-fornecedor-3", nome: "Metalúrgica Gerdau do Brasil", pais: "Brasil" },
@@ -109,7 +110,7 @@ const MOCK_PEDIDOS: AnalisePedidoResponse[] = [
     recebimento: "REC-4465",
     notaFiscal: "NF-90812",
     quantidadeRecebimentos: 1,
-    rateio: "Caldeiraria Pesada",
+    rateio: { id: "mock-rateio-6", nome: "Caldeiraria Pesada" },
     referencia: "Tanque T-101",
     invoice: "INV-1025",
     responsavelCompras: "Mariana Silva",
@@ -123,6 +124,7 @@ function filtrarMock(filtro: AnalisePedidosFiltro): AnalisePedidoResponse[] {
     const emissao = p.dataEmissaoPc ?? "";
     if (emissao < filtro.dataInicio || emissao > filtro.dataFim) return false;
     if (filtro.situacao && situacaoDe(p) !== filtro.situacao) return false;
+    if (filtro.rateios?.length && !filtro.rateios.includes(p.rateio?.id ?? "")) return false;
     if (!busca) return true;
     return [p.pedidoDeCompra, p.requisicaoDeCompra, p.fornecedor?.nome, p.material?.codigo, p.material?.descricao].some((v) =>
       (v ?? "").toLowerCase().includes(busca)
@@ -130,15 +132,22 @@ function filtrarMock(filtro: AnalisePedidosFiltro): AnalisePedidoResponse[] {
   });
 }
 
-/** Remove filtros vazios para não mandar `busca=&situacao=` na URL. */
-function params(filtro: AnalisePedidosFiltro) {
-  return {
-    dataInicio: filtro.dataInicio,
-    dataFim: filtro.dataFim,
-    ...(filtro.busca?.trim() ? { busca: filtro.busca.trim() } : {}),
-    ...(filtro.situacao ? { situacao: filtro.situacao } : {}),
-  };
+/**
+ * Remove filtros vazios para não mandar `busca=&situacao=` na URL. Rateios vão como
+ * rateios=id1&rateios=id2 (sem colchetes), que é o que o Spring entende como lista.
+ */
+function params(filtro: AnalisePedidosFiltro, extra: Record<string, string | number> = {}) {
+  const search = new URLSearchParams({ dataInicio: filtro.dataInicio, dataFim: filtro.dataFim });
+  if (filtro.busca?.trim()) search.set("busca", filtro.busca.trim());
+  if (filtro.situacao) search.set("situacao", filtro.situacao);
+  filtro.rateios?.forEach((r) => search.append("rateios", r));
+  Object.entries(extra).forEach(([k, v]) => search.set(k, String(v)));
+  return search;
 }
+
+const MOCK_RATEIOS: RateioFiltro[] = MOCK_PEDIDOS.flatMap((p) => (p.rateio ? [p.rateio] : [])).sort((a, b) =>
+  a.nome.localeCompare(b.nome)
+);
 
 export const analisePedidosApi = {
   /** GET /compras/relatorios/analise-pedidos: itens paginados, ordenados por emissão do PC. */
@@ -150,7 +159,7 @@ export const analisePedidosApi = {
     try {
       const response = await apiClient.get<ApiResponse<PageResult<AnalisePedidoResponse>>>(
         "/compras/relatorios/analise-pedidos",
-        { params: { ...params(filtro), page, size } }
+        { params: params(filtro, { page, size }) }
       );
       return response.data.data;
     } catch (error) {
@@ -196,6 +205,17 @@ export const analisePedidosApi = {
       })
       .catch(rethrowBlobError);
     saveBlobResponse(response, `analise-pedidos_${filtro.dataInicio}_${filtro.dataFim}.xlsx`);
+  },
+
+  /** GET .../rateios: rateios (id e nome) presentes nos itens importados, para o filtro. */
+  rateios: async (): Promise<RateioFiltro[]> => {
+    try {
+      const response = await apiClient.get<ApiResponse<RateioFiltro[]>>("/compras/relatorios/analise-pedidos/rateios");
+      return response.data.data;
+    } catch (error) {
+      if (env.VITE_ENABLE_MOCK_FALLBACK) return MOCK_RATEIOS;
+      throw error;
+    }
   },
 
   /** POST .../importar: substitui os itens do período pelos do ERP. */

@@ -3,13 +3,19 @@ import type { SituacaoPedido } from "../types";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/lib/utils";
+import { MultiSelect } from "@/shared/components/ui/multi-select";
 import { SITUACAO_LABELS } from "../lib/situacao";
+import { useAnaliseRateiosQuery } from "../hooks/use-analise-pedidos";
+import { rateioOptions } from "../../shared/rateios";
+import { RateiosSelecionados } from "../../shared/components/rateios-selecionados";
 
 export interface AnaliseFiltrosValue {
   dataInicio: string;
   dataFim: string;
   busca: string;
   situacao: SituacaoPedido | "";
+  /** Ids dos rateios; vazio = todos. */
+  rateios: string[];
 }
 
 export interface AnaliseFiltrosProps {
@@ -24,7 +30,8 @@ const SITUACOES: (SituacaoPedido | "")[] = ["", "PENDENTE", "PARCIAL", "ATENDIDO
 export function AnaliseFiltros({ value, onChange, onClear, periodoInvalido }: AnaliseFiltrosProps) {
   const set = <K extends keyof AnaliseFiltrosValue>(key: K, v: AnaliseFiltrosValue[K]) =>
     onChange({ ...value, [key]: v });
-  const temFiltroExtra = !!value.busca || !!value.situacao;
+  const temFiltroExtra = !!value.busca || !!value.situacao || value.rateios.length > 0;
+  const rateiosQuery = useAnaliseRateiosQuery();
 
   return (
     <div className="space-y-3 rounded-xl border border-border bg-card p-4">
@@ -90,6 +97,19 @@ export function AnaliseFiltros({ value, onChange, onClear, periodoInvalido }: An
           </div>
         </div>
 
+        <div className="min-w-0 space-y-1 lg:w-56">
+          <span className="block text-xs font-medium text-muted-foreground">Rateios</span>
+          <MultiSelect
+            aria-label="Filtrar por rateios"
+            options={rateioOptions(rateiosQuery.data)}
+            value={value.rateios}
+            onChange={(rateios) => set("rateios", rateios)}
+            isLoading={rateiosQuery.isLoading}
+            placeholder="Todos os rateios"
+            searchPlaceholder="Buscar rateio"
+          />
+        </div>
+
         {temFiltroExtra && (
           <Button variant="ghost" size="sm" onClick={onClear} className="h-9 self-start text-muted-foreground lg:self-end">
             <X className="h-4 w-4" />
@@ -97,6 +117,8 @@ export function AnaliseFiltros({ value, onChange, onClear, periodoInvalido }: An
           </Button>
         )}
       </div>
+
+      <RateiosSelecionados value={value.rateios} onChange={(rateios) => set("rateios", rateios)} rateios={rateiosQuery.data} />
 
       {periodoInvalido && (
         <p className="text-xs font-medium text-danger">A data inicial precisa ser anterior ou igual à final.</p>

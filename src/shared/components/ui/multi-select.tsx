@@ -2,8 +2,14 @@ import * as React from "react";
 import { Check, ChevronDown, Search, X } from "lucide-react";
 import { cn, normalizeSearch as normalize } from "@/shared/lib/utils";
 
+export interface MultiSelectOption {
+  value: string;
+  label: string;
+}
+
 export interface MultiSelectProps {
-  options: string[];
+  options: MultiSelectOption[];
+  /** Valores (`option.value`) selecionados. */
   value: string[];
   onChange: (value: string[]) => void;
   /** Texto do gatilho quando nada está selecionado (nada selecionado = todos). */
@@ -56,14 +62,15 @@ export function MultiSelect({
 
   const filtered = React.useMemo(() => {
     const q = normalize(query.trim());
-    return q ? options.filter((o) => normalize(o).includes(q)) : options;
+    return q ? options.filter((o) => normalize(o.label).includes(q)) : options;
   }, [options, query]);
 
   const toggle = (option: string) =>
     onChange(selected.has(option) ? value.filter((v) => v !== option) : [...value, option]);
 
+  const rotulo = (v: string) => options.find((o) => o.value === v)?.label ?? v;
   const label =
-    value.length === 0 ? placeholder : value.length === 1 ? value[0] : `${value[0]} +${value.length - 1}`;
+    value.length === 0 ? placeholder : value.length === 1 ? rotulo(value[0]) : `${rotulo(value[0])} +${value.length - 1}`;
 
   return (
     <div ref={rootRef} className={cn("relative", className)}>
@@ -110,12 +117,12 @@ export function MultiSelect({
               <li className="px-3 py-2 text-xs text-muted-foreground">Nada encontrado.</li>
             )}
             {filtered.map((option) => {
-              const checked = selected.has(option);
+              const checked = selected.has(option.value);
               return (
-                <li key={option} role="option" aria-selected={checked}>
+                <li key={option.value} role="option" aria-selected={checked}>
                   <button
                     type="button"
-                    onClick={() => toggle(option)}
+                    onClick={() => toggle(option.value)}
                     className="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-xs text-foreground hover:bg-muted"
                   >
                     <span
@@ -126,7 +133,7 @@ export function MultiSelect({
                     >
                       {checked && <Check className="h-3 w-3" strokeWidth={3} />}
                     </span>
-                    <span className="min-w-0 flex-1 truncate">{option}</span>
+                    <span className="min-w-0 flex-1 truncate">{option.label}</span>
                   </button>
                 </li>
               );
@@ -136,7 +143,7 @@ export function MultiSelect({
           <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/40 px-2 py-1.5">
             <button
               type="button"
-              onClick={() => onChange(Array.from(new Set([...value, ...filtered])))}
+              onClick={() => onChange(Array.from(new Set([...value, ...filtered.map((o) => o.value)])))}
               className="cursor-pointer rounded-md px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10"
             >
               Selecionar {query ? "encontrados" : "todos"}
