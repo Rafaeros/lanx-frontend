@@ -1,6 +1,7 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { ThemeToggle } from "@/shared/components/ui/theme-toggle";
+import { NotificacoesBell } from "@/features/notificacoes";
 import { Breadcrumbs } from "./breadcrumbs";
 
 export function AppHeader({ onOpenMenu }: { onOpenMenu: () => void }) {
@@ -18,7 +19,10 @@ export function AppHeader({ onOpenMenu }: { onOpenMenu: () => void }) {
         </Button>
         <Breadcrumbs />
       </div>
-      <ThemeToggle />
+      <div className="flex items-center gap-1">
+        <NotificacoesBell />
+        <ThemeToggle />
+      </div>
     </header>
   );
 }
