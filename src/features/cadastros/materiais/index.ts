@@ -7,3 +7,4 @@ export * from "./components/material-form";
 export * from "./pages/materiais-list-page";
 export * from "./pages/material-edit-page";
 
+export * from "./components/material-quick-create";

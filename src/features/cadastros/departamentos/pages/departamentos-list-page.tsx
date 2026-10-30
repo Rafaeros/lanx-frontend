@@ -11,7 +11,7 @@ import { PageHeader } from "@/shared/components/ui/page-header";
 import { PageShell } from "@/shared/components/ui/page-shell";
 import { useToast } from "@/shared/components/ui/toast";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
-import type { DepartamentoRequest, DepartamentoResponse } from "../types";
+import type { DepartamentoResponse } from "../types";
 import {
   useCreateDepartamentoMutation,
   useDeleteDepartamentoMutation,
@@ -20,7 +20,7 @@ import {
 } from "../hooks/use-departamentos";
 import { DepartamentoTable } from "../components/departamento-table";
 import { DepartamentoForm } from "../components/departamento-form";
-import type { DepartamentoFormData } from "../schemas";
+import { toDepartamentoRequest, type DepartamentoFormData } from "../schemas";
 
 export function DepartamentosListPage() {
   const toast = useToast();
@@ -58,7 +58,7 @@ export function DepartamentosListPage() {
   };
 
   const handleSubmit = (formData: DepartamentoFormData) => {
-    const request: DepartamentoRequest = { nome: formData.nome.trim() };
+    const request = toDepartamentoRequest(formData);
     const onError = (err: unknown) =>
       toast.error("Não foi possível salvar o departamento", getApiErrorMessage(err, "Tente novamente."));
 

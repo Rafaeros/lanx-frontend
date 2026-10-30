@@ -11,7 +11,7 @@ import { PageHeader } from "@/shared/components/ui/page-header";
 import { PageShell } from "@/shared/components/ui/page-shell";
 import { useToast } from "@/shared/components/ui/toast";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
-import type { OperadorRequest, OperadorResponse } from "../types";
+import type { OperadorResponse } from "../types";
 import {
   useCreateOperadorMutation,
   useDeleteOperadorMutation,
@@ -20,7 +20,7 @@ import {
 } from "../hooks/use-operadores";
 import { OperadorTable } from "../components/operador-table";
 import { OperadorForm } from "../components/operador-form";
-import type { OperadorFormData } from "../schemas";
+import { toOperadorRequest, type OperadorFormData } from "../schemas";
 
 export function OperadoresListPage() {
   const toast = useToast();
@@ -58,12 +58,7 @@ export function OperadoresListPage() {
   };
 
   const handleSubmit = (formData: OperadorFormData) => {
-    // Select vazio = sem departamento / sem usuário
-    const request: OperadorRequest = {
-      nome: formData.nome.trim(),
-      departamentoId: formData.departamentoId || null,
-      userId: formData.userId || null,
-    };
+    const request = toOperadorRequest(formData);
     const onError = (err: unknown) =>
       toast.error("Não foi possível salvar o operador", getApiErrorMessage(err, "Tente novamente."));
 

@@ -1,4 +1,4 @@
-import { Briefcase, Building2, HardHat, Package, Ruler, ShoppingBag, Split, Truck } from "lucide-react";
+import { Briefcase, Building2, HardHat, Package, Ruler, ShoppingBag, Split, Tags, Truck } from "lucide-react";
 import type { NavItem, NavSection } from "../types";
 
 /**
@@ -61,6 +61,13 @@ export const CADASTROS: NavItem[] = [
     to: "/cadastros/clientes",
     icon: Briefcase,
     featureKey: "cadastros.clientes",
+  },
+  {
+    id: "cadastros.tipos-nao-conformidade",
+    label: "Tipos de não conformidade",
+    to: "/cadastros/tipos-nao-conformidade",
+    icon: Tags,
+    featureKey: "cadastros.tipos-nao-conformidade",
   },
 ];
 

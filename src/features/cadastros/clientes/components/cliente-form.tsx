@@ -10,16 +10,18 @@ import { formatCnpj } from "../lib/cnpj";
 
 export interface ClienteFormProps {
   initialData?: ClienteResponse | null;
+  /** Valores iniciais de um cadastro novo (ex.: o texto buscado no cadastro rápido). */
+  defaults?: Partial<ClienteFormData>;
   onSubmit: (data: ClienteFormData) => void;
   onCancel: () => void;
   isLoading?: boolean;
 }
 
-export function ClienteForm({ initialData, onSubmit, onCancel, isLoading }: ClienteFormProps) {
+export function ClienteForm({ initialData, defaults, onSubmit, onCancel, isLoading }: ClienteFormProps) {
   const methods = useForm<ClienteFormData>({
     resolver: zodResolver(clienteSchema),
     defaultValues: {
-      nome: initialData?.nome ?? "",
+      nome: initialData?.nome ?? defaults?.nome ?? "",
       cnpj: formatCnpj(initialData?.cnpj),
     },
   });

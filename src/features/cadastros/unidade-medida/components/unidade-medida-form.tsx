@@ -7,17 +7,19 @@ import { unidadeMedidaSchema, type UnidadeMedidaFormData } from "../schemas";
 
 export interface UnidadeMedidaFormProps {
   initialData?: UnidadeMedidaResponse | null;
+  /** Valores iniciais de um cadastro novo (ex.: o texto buscado no cadastro rápido). */
+  defaults?: Partial<UnidadeMedidaFormData>;
   onSubmit: (data: UnidadeMedidaFormData) => void;
   onCancel: () => void;
   isLoading?: boolean;
 }
 
-export function UnidadeMedidaForm({ initialData, onSubmit, onCancel, isLoading }: UnidadeMedidaFormProps) {
+export function UnidadeMedidaForm({ initialData, defaults, onSubmit, onCancel, isLoading }: UnidadeMedidaFormProps) {
   const methods = useForm<UnidadeMedidaFormData>({
     resolver: zodResolver(unidadeMedidaSchema),
     defaultValues: {
-      nome: initialData?.nome ?? "",
-      sigla: initialData?.sigla ?? "",
+      nome: initialData?.nome ?? defaults?.nome ?? "",
+      sigla: initialData?.sigla ?? defaults?.sigla ?? "",
     },
   });
 

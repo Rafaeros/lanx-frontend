@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { soDigitos } from "./lib/cnpj";
+import type { ClienteRequest } from "./types";
 
 export const clienteSchema = z.object({
   nome: z.string().trim().min(1, "O nome é obrigatório").max(250, "Nome muito longo"),
@@ -11,3 +12,9 @@ export const clienteSchema = z.object({
 });
 
 export type ClienteFormData = z.infer<typeof clienteSchema>;
+
+/** Formulário → corpo de POST/PUT: CNPJ só com dígitos, vazio = null. */
+export const toClienteRequest = (data: ClienteFormData): ClienteRequest => ({
+  nome: data.nome.trim(),
+  cnpj: soDigitos(data.cnpj) || null,
+});

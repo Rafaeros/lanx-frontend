@@ -7,16 +7,18 @@ import { departamentoSchema, type DepartamentoFormData } from "../schemas";
 
 export interface DepartamentoFormProps {
   initialData?: DepartamentoResponse | null;
+  /** Valores iniciais de um cadastro novo (ex.: o texto buscado no cadastro rápido). */
+  defaults?: Partial<DepartamentoFormData>;
   onSubmit: (data: DepartamentoFormData) => void;
   onCancel: () => void;
   isLoading?: boolean;
 }
 
-export function DepartamentoForm({ initialData, onSubmit, onCancel, isLoading }: DepartamentoFormProps) {
+export function DepartamentoForm({ initialData, defaults, onSubmit, onCancel, isLoading }: DepartamentoFormProps) {
   const methods = useForm<DepartamentoFormData>({
     resolver: zodResolver(departamentoSchema),
     defaultValues: {
-      nome: initialData?.nome ?? "",
+      nome: initialData?.nome ?? defaults?.nome ?? "",
     },
   });
 

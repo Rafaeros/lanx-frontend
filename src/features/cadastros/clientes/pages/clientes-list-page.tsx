@@ -11,7 +11,7 @@ import { PageHeader } from "@/shared/components/ui/page-header";
 import { PageShell } from "@/shared/components/ui/page-shell";
 import { useToast } from "@/shared/components/ui/toast";
 import { PermissionGate } from "@/features/auth/components/permission-gate";
-import type { ClienteRequest, ClienteResponse } from "../types";
+import type { ClienteResponse } from "../types";
 import {
   useCreateClienteMutation,
   useDeleteClienteMutation,
@@ -20,8 +20,7 @@ import {
 } from "../hooks/use-clientes";
 import { ClienteTable } from "../components/cliente-table";
 import { ClienteForm } from "../components/cliente-form";
-import type { ClienteFormData } from "../schemas";
-import { soDigitos } from "../lib/cnpj";
+import { toClienteRequest, type ClienteFormData } from "../schemas";
 
 export function ClientesListPage() {
   const toast = useToast();
@@ -59,8 +58,7 @@ export function ClientesListPage() {
   };
 
   const handleSubmit = (formData: ClienteFormData) => {
-    const cnpj = soDigitos(formData.cnpj);
-    const request: ClienteRequest = { nome: formData.nome.trim(), cnpj: cnpj || null };
+    const request = toClienteRequest(formData);
     const onError = (err: unknown) =>
       toast.error("Não foi possível salvar o cliente", getApiErrorMessage(err, "Tente novamente."));
 
