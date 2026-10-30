@@ -56,12 +56,13 @@
   --info: color-mix(in srgb, var(--brand-to) 70%, black);
 
   /* Cor de cada módulo (ícones, seletor, nome na sidebar) */
-  /* Compras amarelo · Produção e Estoque laranja · Comercial e Administração vermelho · Financeiro azul
+  /* Compras amarelo · Produção e Estoque laranja · Comercial e Administração vermelho · Financeiro azul · Teste e Inspeção violeta
      (tons diferentes dentro da mesma família para os módulos não se confundirem) */
   --module-compras: #ca8a04;
   --module-producao: #ea580c;
   --module-comercial: #dc2626;
   --module-qualidade: #0d9488;
+  --module-teste-inspecao: #7c3aed;
   --module-estoque: #c2410c;
   --module-financeiro: #2563eb;
   --module-administracao: #be123c;
@@ -101,6 +102,7 @@
   --module-producao: #fb923c;
   --module-comercial: #f87171;
   --module-qualidade: #2dd4bf;
+  --module-teste-inspecao: #a78bfa;
   --module-estoque: #fdba74;
   --module-financeiro: #60a5fa;
   --module-administracao: #fb7185;
@@ -309,6 +311,7 @@ body {
     --success: #047857;
     --warning: #b45309;
     --danger: #dc2626;
+    --info: color-mix(in srgb, var(--brand-to) 70%, black);
     color: var(--foreground);
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

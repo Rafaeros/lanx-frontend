@@ -8,9 +8,11 @@ import {
   Gauge,
   Handshake,
   KeyRound,
+  ShieldAlert,
   ShieldCheck,
   ShoppingCart,
   UserCog,
+  UserSearch,
   Wallet,
   Warehouse,
 } from "lucide-react";
@@ -100,7 +102,7 @@ export const MODULES: ModuleDefinition[] = [
   {
     id: "qualidade",
     label: "Qualidade",
-    description: "IQF de fornecedores e não conformidades",
+    description: "IQF de fornecedores",
     icon: BadgeCheck,
     status: "available",
     featureKey: "qualidade",
@@ -114,6 +116,29 @@ export const MODULES: ModuleDefinition[] = [
             to: "/qualidade/iqf",
             icon: Gauge,
             featureKey: "qualidade.iqf",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "teste-inspecao",
+    label: "Teste e Inspeção",
+    description: "Não conformidades das ordens de produção",
+    icon: UserSearch,
+    status: "available",
+    featureKey: "teste-inspecao",
+    cadastros: ["cadastros.tipos-nao-conformidade", "cadastros.departamentos", "cadastros.operadores"],
+    sections: [
+      {
+        kind: "operacoes",
+        items: [
+          {
+            id: "teste-inspecao.nao-conformidade",
+            label: "Não conformidades",
+            to: "/teste-inspecao/nao-conformidades",
+            icon: ShieldAlert,
+            featureKey: "teste-inspecao.nao-conformidade",
           },
         ],
       },

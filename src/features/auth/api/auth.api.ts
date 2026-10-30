@@ -125,6 +125,19 @@ const MOCK_NAVIGATION: NavigationNode[] = [
     ],
   },
   {
+    key: "teste-inspecao",
+    label: "Teste e Inspeção",
+    actions: ["read", "create", "update", "delete"],
+    children: [
+      {
+        key: "teste-inspecao.nao-conformidade",
+        label: "Não Conformidades",
+        actions: ["read", "create", "update", "delete", "exportar"],
+        children: [],
+      },
+    ],
+  },
+  {
     key: "administracao",
     label: "Administração",
     actions: ["read", "create", "update", "delete"],

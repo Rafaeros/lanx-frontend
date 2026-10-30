@@ -5,6 +5,7 @@ export type ModuleId =
   | "producao"
   | "comercial"
   | "qualidade"
+  | "teste-inspecao"
   | "estoque"
   | "financeiro"
   | "administracao";

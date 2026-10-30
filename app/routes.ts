@@ -25,6 +25,7 @@ export default [
     route("cadastros/compradores", "routes/_app.cadastros.compradores.tsx"),
     route("cadastros/rateios", "routes/_app.cadastros.rateios.tsx"),
     route("cadastros/clientes", "routes/_app.cadastros.clientes.tsx"),
+    route("cadastros/tipos-nao-conformidade", "routes/_app.cadastros.tipos-nao-conformidade.tsx"),
     route("compras/analise-pedidos", "routes/_app.compras.analise-pedidos.tsx"),
     // endereço antigo do IQF: redireciona para /qualidade/iqf
     route("compras/iqf", "routes/_app.compras.iqf.tsx"),
@@ -32,6 +33,9 @@ export default [
     route("producao/ordens-de-producao", "routes/_app.producao.ordens-de-producao.tsx"),
     route("comercial/carteira", "routes/_app.comercial.carteira.tsx"),
     route("qualidade/iqf", "routes/_app.qualidade.iqf.tsx"),
+    // endereço antigo das não conformidades: redireciona para /teste-inspecao/nao-conformidades
+    route("qualidade/nao-conformidades", "routes/_app.qualidade.nao-conformidades.tsx"),
+    route("teste-inspecao/nao-conformidades", "routes/_app.teste-inspecao.nao-conformidades.tsx"),
     route("administracao/usuarios", "routes/_app.administracao.usuarios.tsx"),
     route("administracao/perfis", "routes/_app.administracao.perfis.tsx"),
     route("administracao/perfis/novo", "routes/_app.administracao.perfis.novo.tsx"),
