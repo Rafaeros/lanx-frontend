@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Lock, User } from "lucide-react";
 import { FormInput } from "@/shared/components/form/form-input";
 import { Button } from "@/shared/components/ui/button";
+import { FormDepartamentoSelect } from "@/features/cadastros/departamentos";
 import type { RoleResponse } from "../types";
 import type { UserResponse } from "@/shared/types";
 import {
@@ -13,6 +14,8 @@ import {
 } from "../lib/schemas";
 import { RolePicker } from "./role-picker";
 import { Checkbox } from "./checkbox";
+
+const DEPARTAMENTO_HINT = "Opcional. Define os avisos que o usuário recebe (ex.: não conformidades vão para Qualidade e Teste).";
 
 interface FormActionsProps {
   onCancel: () => void;
@@ -46,7 +49,7 @@ export function NovoUsuarioForm({
 }) {
   const methods = useForm<NovoUsuarioFormData>({
     resolver: zodResolver(novoUsuarioSchema),
-    defaultValues: { username: "", password: "", roleIds: [] },
+    defaultValues: { username: "", password: "", roleIds: [], departamentoId: "" },
   });
 
   return (
@@ -71,6 +74,7 @@ export function NovoUsuarioForm({
           required
           leftIcon={<Lock className="h-4 w-4" />}
         />
+        <FormDepartamentoSelect hint={DEPARTAMENTO_HINT} />
         <Controller
           name="roleIds"
           control={methods.control}
@@ -102,45 +106,53 @@ export function EditarUsuarioForm({
 }) {
   const methods = useForm<EditarUsuarioFormData>({
     resolver: zodResolver(editarUsuarioSchema),
-    defaultValues: { roleIds: user.roles.map((r) => r.id), active: user.active },
+    defaultValues: {
+      roleIds: user.roles.map((r) => r.id),
+      active: user.active,
+      departamentoId: user.departamento?.id ?? "",
+    },
   });
 
   return (
-    <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
-      <div className="rounded-lg border border-border bg-muted/50 px-3 py-2.5">
-        <p className="text-xs text-muted-foreground">Usuário</p>
-        <p className="font-mono text-sm font-semibold text-foreground">{user.username}</p>
-      </div>
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
+        <div className="rounded-lg border border-border bg-muted/50 px-3 py-2.5">
+          <p className="text-xs text-muted-foreground">Usuário</p>
+          <p className="font-mono text-sm font-semibold text-foreground">{user.username}</p>
+        </div>
 
-      <Controller
-        name="roleIds"
-        control={methods.control}
-        render={({ field, fieldState }) => (
-          <RolePicker roles={roles} value={field.value} onChange={field.onChange} error={fieldState.error?.message} />
-        )}
-      />
+        <FormDepartamentoSelect hint={DEPARTAMENTO_HINT} />
 
-      <Controller
-        name="active"
-        control={methods.control}
-        render={({ field }) => (
-          <div className="space-y-1">
-            <Checkbox
-              checked={field.value}
-              onChange={field.onChange}
-              disabled={isSelf}
-              label={<span className="font-medium">Usuário ativo</span>}
-            />
-            <p className="pl-6 text-xs text-muted-foreground">
-              {isSelf
-                ? "Você não pode desativar o seu próprio usuário."
-                : "Usuários inativos não conseguem entrar no sistema."}
-            </p>
-          </div>
-        )}
-      />
+        <Controller
+          name="roleIds"
+          control={methods.control}
+          render={({ field, fieldState }) => (
+            <RolePicker roles={roles} value={field.value} onChange={field.onChange} error={fieldState.error?.message} />
+          )}
+        />
 
-      <FormActions onCancel={onCancel} isLoading={isLoading} submitLabel="Salvar alterações" />
-    </form>
+        <Controller
+          name="active"
+          control={methods.control}
+          render={({ field }) => (
+            <div className="space-y-1">
+              <Checkbox
+                checked={field.value}
+                onChange={field.onChange}
+                disabled={isSelf}
+                label={<span className="font-medium">Usuário ativo</span>}
+              />
+              <p className="pl-6 text-xs text-muted-foreground">
+                {isSelf
+                  ? "Você não pode desativar o seu próprio usuário."
+                  : "Usuários inativos não conseguem entrar no sistema."}
+              </p>
+            </div>
+          )}
+        />
+
+        <FormActions onCancel={onCancel} isLoading={isLoading} submitLabel="Salvar alterações" />
+      </form>
+    </FormProvider>
   );
 }

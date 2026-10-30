@@ -16,7 +16,12 @@ import { useCreateUsuarioMutation, useUpdateUsuarioMutation, useUsuariosQuery } 
 import { usePerfisQuery } from "../hooks/use-perfis";
 import { UsuariosTable } from "../components/usuarios-table";
 import { EditarUsuarioForm, NovoUsuarioForm } from "../components/usuario-form";
-import type { EditarUsuarioFormData, NovoUsuarioFormData } from "../lib/schemas";
+import {
+  toRegisterUserRequest,
+  toUpdateUserRequest,
+  type EditarUsuarioFormData,
+  type NovoUsuarioFormData,
+} from "../lib/schemas";
 
 export function UsuariosPage() {
   const toast = useToast();
@@ -38,7 +43,7 @@ export function UsuariosPage() {
   }, [usuarios, busca]);
 
   const handleCreate = (data: NovoUsuarioFormData) =>
-    createMutation.mutate(data, {
+    createMutation.mutate(toRegisterUserRequest(data), {
       onSuccess: () => {
         setCreating(false);
         toast.success("Usuário cadastrado", data.username);
@@ -50,7 +55,7 @@ export function UsuariosPage() {
   const handleUpdate = (data: EditarUsuarioFormData) => {
     if (!editing) return;
     updateMutation.mutate(
-      { id: editing.id, data },
+      { id: editing.id, data: toUpdateUserRequest(data) },
       {
         onSuccess: () => {
           toast.success("Usuário atualizado", editing.username);

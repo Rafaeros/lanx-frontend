@@ -30,6 +30,17 @@ export function UsuariosTable({ data, isLoading, onPageChange, onSizeChange, onE
         ),
       },
       {
+        key: "departamento",
+        hideBelow: "md",
+        header: "Departamento",
+        cell: (user) =>
+          user.departamento ? (
+            <span className="text-sm text-foreground">{user.departamento.nome}</span>
+          ) : (
+            <span className="text-sm text-muted-foreground">—</span>
+          ),
+      },
+      {
         key: "roles",
         hideBelow: "sm",
         header: "Perfis",

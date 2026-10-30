@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { RegisterUserRequest, UpdateUserRequest } from "../types";
 
 /** Mesmas regras do backend (User.USERNAME_FORMAT e PasswordPolicy). */
 export const novoUsuarioSchema = z.object({
@@ -14,11 +15,15 @@ export const novoUsuarioSchema = z.object({
     .regex(/[a-zA-Z]/, "A senha precisa ter letras")
     .regex(/\d/, "A senha precisa ter números"),
   roleIds: z.array(z.string()).min(1, "Escolha pelo menos um perfil"),
+  /** Vazio = sem departamento. */
+  departamentoId: z.string(),
 });
 
 export const editarUsuarioSchema = z.object({
   roleIds: z.array(z.string()).min(1, "Escolha pelo menos um perfil"),
   active: z.boolean(),
+  /** Vazio = sem departamento. */
+  departamentoId: z.string(),
 });
 
 export const perfilSchema = z.object({
@@ -30,3 +35,15 @@ export const perfilSchema = z.object({
 export type NovoUsuarioFormData = z.infer<typeof novoUsuarioSchema>;
 export type EditarUsuarioFormData = z.infer<typeof editarUsuarioSchema>;
 export type PerfilFormData = z.infer<typeof perfilSchema>;
+
+/** Formulário → corpo de POST /auth/users: select vazio = sem departamento. */
+export const toRegisterUserRequest = (data: NovoUsuarioFormData): RegisterUserRequest => ({
+  ...data,
+  departamentoId: data.departamentoId || null,
+});
+
+/** Formulário → corpo de PUT /auth/users/{id}: select vazio = sem departamento. */
+export const toUpdateUserRequest = (data: EditarUsuarioFormData): UpdateUserRequest => ({
+  ...data,
+  departamentoId: data.departamentoId || null,
+});

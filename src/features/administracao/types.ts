@@ -30,9 +30,12 @@ export interface RegisterUserRequest {
   username: string;
   password: string;
   roleIds: string[];
+  departamentoId: string | null;
 }
 
+/** `departamentoId` nulo tira o usuário do departamento. */
 export interface UpdateUserRequest {
   roleIds: string[];
   active: boolean;
+  departamentoId: string | null;
 }

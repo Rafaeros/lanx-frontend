@@ -43,6 +43,8 @@ export interface UserResponse {
   active: boolean;
   /** Ainda não trocou a senha provisória. */
   firstAccess?: boolean;
+  /** Nulo = sem departamento (não recebe os avisos por departamento). */
+  departamento?: { id: string; nome: string } | null;
   roles: RoleSummary[];
   permissions: string[];
 }
