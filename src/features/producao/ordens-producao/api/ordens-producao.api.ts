@@ -1,6 +1,11 @@
 import apiClient from "@/shared/api/client";
 import type { ApiResponse, PageResult } from "@/shared/types";
-import type { OrdemProducaoFilter, OrdemProducaoRequest, OrdemProducaoResponse } from "../types";
+import type {
+  ImportarOrdensResponse,
+  OrdemProducaoFilter,
+  OrdemProducaoRequest,
+  OrdemProducaoResponse,
+} from "../types";
 import { env } from "@/config/env";
 import { paginate } from "@/shared/lib/pagination";
 
@@ -92,6 +97,22 @@ export const ordensProducaoApi = {
       }
       throw error;
     }
+  },
+
+  /**
+   * POST /importar (multipart): planilha de OPs exportada do ERP. Atualiza as existentes pelo código,
+   * cria as novas e cadastra cliente/produto que faltarem. Finalizadas só entram se pedido.
+   */
+  importar: async (arquivo: File, incluirFinalizadas: boolean): Promise<ImportarOrdensResponse> => {
+    const form = new FormData();
+    form.append("arquivo", arquivo);
+    const response = await apiClient.post<ApiResponse<ImportarOrdensResponse>>(`${BASE}/importar`, form, {
+      params: { incluirFinalizadas },
+      headers: { "Content-Type": "multipart/form-data" },
+      // milhares de linhas, com cadastros criados na hora
+      timeout: 180000,
+    });
+    return response.data.data;
   },
 
   delete: async (id: string): Promise<void> => {

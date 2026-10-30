@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Plus, RefreshCw, Search, ClipboardList } from "lucide-react";
+import { Plus, RefreshCw, Search, ClipboardList, Upload } from "lucide-react";
 import { useDebounce } from "@/shared/hooks/use-debounce";
 import { usePagination } from "@/shared/hooks/use-pagination";
 import { getApiErrorMessage } from "@/shared/lib/api-error";
@@ -20,6 +20,7 @@ import {
 } from "../hooks/use-ordens-producao";
 import { OrdemProducaoTable } from "../components/ordem-producao-table";
 import { OrdemProducaoForm } from "../components/ordem-producao-form";
+import { OrdemProducaoImportarDialog } from "../components/ordem-producao-importar-dialog";
 import type { OrdemProducaoFormData } from "../schemas";
 
 export function OrdensProducaoListPage() {
@@ -41,6 +42,7 @@ export function OrdensProducaoListPage() {
   const [formOpen, setFormOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<OrdemProducaoResponse | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<OrdemProducaoResponse | null>(null);
+  const [importando, setImportando] = React.useState(false);
 
   const openCreate = () => {
     setEditing(null);
@@ -115,6 +117,12 @@ export function OrdensProducaoListPage() {
               <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
               <span className="hidden sm:inline">Atualizar</span>
             </Button>
+            <PermissionGate permission="producao.ordens-producao:importar">
+              <Button variant="outline" size="sm" onClick={() => setImportando(true)} className="h-9" title="Importar a planilha de OPs exportada do ERP">
+                <Upload className="h-4 w-4" />
+                <span className="hidden sm:inline">Importar planilha</span>
+              </Button>
+            </PermissionGate>
             <PermissionGate permission="producao.ordens-producao:create">
               <Button variant="primary" size="sm" onClick={openCreate} className="h-9">
                 <Plus className="h-4 w-4" />
@@ -164,6 +172,8 @@ export function OrdensProducaoListPage() {
           isLoading={createMutation.isPending || updateMutation.isPending}
         />
       </Dialog>
+
+      <OrdemProducaoImportarDialog open={importando} onClose={() => setImportando(false)} />
 
       <ConfirmDialog
         open={!!deleteTarget}

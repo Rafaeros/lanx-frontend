@@ -41,6 +41,20 @@ export function useUpdateOrdemProducaoMutation() {
   });
 }
 
+export function useImportarOrdensProducaoMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ arquivo, incluirFinalizadas }: { arquivo: File; incluirFinalizadas: boolean }) =>
+      ordensProducaoApi.importar(arquivo, incluirFinalizadas),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [ORDENS_KEY] });
+      // a importação cadastra clientes e produtos que faltavam
+      queryClient.invalidateQueries({ queryKey: ["clientes"] });
+      queryClient.invalidateQueries({ queryKey: ["materiais"] });
+    },
+  });
+}
+
 export function useDeleteOrdemProducaoMutation() {
   const invalidate = useInvalidateOrdens();
   return useMutation({

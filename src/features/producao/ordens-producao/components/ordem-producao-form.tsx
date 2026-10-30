@@ -6,8 +6,9 @@ import { FormInput } from "@/shared/components/form/form-input";
 import { FormSearchSelect } from "@/shared/components/form/form-search-select";
 import { Button } from "@/shared/components/ui/button";
 import { hojeIso } from "@/shared/lib/date";
-import { useClientesQuery } from "@/features/cadastros/clientes";
-import { useMateriaisQuery } from "@/features/cadastros/materiais";
+import { withCurrentOption } from "@/shared/lib/options";
+import { useClienteQuickCreate, useClientesQuery } from "@/features/cadastros/clientes";
+import { useMateriaisQuery, useMaterialQuickCreate } from "@/features/cadastros/materiais";
 import type { OrdemProducaoResponse } from "../types";
 import { ordemProducaoSchema, type OrdemProducaoFormData } from "../schemas";
 
@@ -24,6 +25,9 @@ const FILTRO_PRODUTOS = { tipo: "PRODUTO_ACABADO" } as const;
 export function OrdemProducaoForm({ initialData, onSubmit, onCancel, isLoading }: OrdemProducaoFormProps) {
   const { data: clientes, isLoading: isLoadingClientes } = useClientesQuery();
   const { data: produtos, isLoading: isLoadingProdutos } = useMateriaisQuery(FILTRO_PRODUTOS, 0, 200);
+
+  const clienteQuickCreate = useClienteQuickCreate();
+  const produtoQuickCreate = useMaterialQuickCreate(FILTRO_PRODUTOS);
 
   const methods = useForm<OrdemProducaoFormData>({
     resolver: zodResolver(ordemProducaoSchema),
@@ -44,12 +48,11 @@ export function OrdemProducaoForm({ initialData, onSubmit, onCancel, isLoading }
 
   // Mantém o produto atual da OP como opção, mesmo que ele tenha deixado de ser produto acabado
   const produtoOptions = React.useMemo(() => {
-    const options = (produtos?.items || []).map((m) => ({ value: m.id, label: m.codigo, description: m.descricao }));
     const atual = initialData?.material;
-    if (atual && !options.some((o) => o.value === atual.id)) {
-      options.unshift({ value: atual.id, label: atual.codigo, description: atual.descricao });
-    }
-    return options;
+    return withCurrentOption(
+      (produtos?.items || []).map((m) => ({ value: m.id, label: m.codigo, description: m.descricao })),
+      atual && { value: atual.id, label: atual.codigo, description: atual.descricao }
+    );
   }, [produtos, initialData]);
 
   return (
@@ -78,9 +81,10 @@ export function OrdemProducaoForm({ initialData, onSubmit, onCancel, isLoading }
           label="Cliente"
           placeholder="Selecione o cliente"
           searchPlaceholder="Buscar cliente"
-          emptyMessage="Nenhum cliente com esse nome. Cadastre-o em Cadastros › Clientes."
+          emptyMessage="Nenhum cliente com esse nome."
           options={clienteOptions}
           isLoading={isLoadingClientes}
+          quickCreate={clienteQuickCreate}
           required
         />
 
@@ -92,6 +96,7 @@ export function OrdemProducaoForm({ initialData, onSubmit, onCancel, isLoading }
           emptyMessage="Nenhum produto acabado encontrado."
           options={produtoOptions}
           isLoading={isLoadingProdutos}
+          quickCreate={produtoQuickCreate}
           hint="Só materiais do tipo produto acabado (Cadastros › Materiais)."
           required
         />

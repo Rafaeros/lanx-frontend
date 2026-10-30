@@ -38,3 +38,22 @@ export interface OrdemProducaoRequest {
 export interface OrdemProducaoFilter {
   busca?: string;
 }
+
+/** Linha da planilha que não entrou na importação ({@code linha} = número da linha no Excel). */
+export interface LinhaRejeitada {
+  linha: number;
+  codigo?: string | null;
+  motivo: string;
+}
+
+/** POST /importar: resultado da planilha de OPs do ERP. */
+export interface ImportarOrdensResponse {
+  linhasLidas: number;
+  criadas: number;
+  atualizadas: number;
+  /** Finalizadas puladas porque a importação foi feita sem incluí-las. */
+  finalizadasIgnoradas: number;
+  clientesCriados: number;
+  materiaisCriados: number;
+  rejeitadas: LinhaRejeitada[];
+}
