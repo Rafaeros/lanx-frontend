@@ -1,6 +1,6 @@
 import * as React from "react";
 import { FileSpreadsheet, UploadCloud, X } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+import { cn, formatBytes } from "@/shared/lib/utils";
 
 export interface FileDropzoneProps {
   file: File | null;
@@ -14,9 +14,6 @@ export interface FileDropzoneProps {
   disabled?: boolean;
   error?: string;
 }
-
-const formatarTamanho = (bytes: number) =>
-  bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 
 /** Área de upload de um arquivo: clique ou arraste. Valida extensão e tamanho antes de aceitar. */
 export function FileDropzone({
@@ -60,7 +57,7 @@ export function FileDropzone({
           <p className="truncate text-sm font-medium text-foreground" title={file.name}>
             {file.name}
           </p>
-          <p className="text-xs text-muted-foreground">{formatarTamanho(file.size)}</p>
+          <p className="text-xs text-muted-foreground">{formatBytes(file.size)}</p>
         </div>
         <button
           type="button"

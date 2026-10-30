@@ -60,3 +60,8 @@ export function normalizeSearch(text: string): string {
     .replace(/[̀-ͯ]/g, "")
     .toLowerCase();
 }
+
+/** Tamanho de arquivo: 512 → "1 KB", 2_500_000 → "2.4 MB". */
+export function formatBytes(bytes: number): string {
+  return bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}

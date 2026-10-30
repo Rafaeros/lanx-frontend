@@ -1,7 +1,7 @@
 import * as React from "react";
 import { LayoutGrid } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
-import { useDismiss } from "../hooks/use-dismiss";
+import { useDismiss } from "@/shared/hooks/use-dismiss";
 import type { ModuleDefinition } from "../types";
 import { ModuleTile } from "./module-tile";
 

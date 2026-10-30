@@ -1,5 +1,4 @@
-import * as React from "react";
-import { createPortal } from "react-dom";
+import { PrintReport, printTd, printTh, type PrintStat } from "@/shared/components/print";
 import type { CarteiraItemResponse, CarteiraResponse } from "../types";
 import { formatCurrency, formatDateBR, formatNumber } from "@/shared/lib/utils";
 import { formatDataHora, materialEmRisco } from "../lib/carteira";
@@ -14,86 +13,39 @@ export interface CarteiraRelatorioImpressaoProps {
   onDone: () => void;
 }
 
-const th = "border-b border-border px-1.5 py-1 text-left font-semibold";
-const td = "border-b border-border px-1.5 py-1 align-top";
+const th = printTh;
+const td = printTd;
 
-/**
- * Carteira para "Salvar como PDF", no mesmo padrão do IQF: renderizada em #print-root (só aparece na
- * impressão, ver @media print em app.css), com a logo LANX e os materiais pendentes sob cada pedido.
- */
+/** Carteira para "Salvar como PDF" (PrintReport), com os materiais pendentes sob cada pedido. */
 export function CarteiraRelatorioImpressao({ carteira, itens, filtrosTabela, onDone }: CarteiraRelatorioImpressaoProps) {
-  const [root] = React.useState(() => {
-    const el = document.createElement("div");
-    el.id = "print-root";
-    return el;
-  });
-  // a janela de impressão só abre com a logo carregada (senão sai em branco no PDF)
-  const [logoPronta, setLogoPronta] = React.useState(false);
-
-  React.useEffect(() => {
-    document.body.appendChild(root);
-    return () => root.remove();
-  }, [root]);
-
-  React.useEffect(() => {
-    if (!logoPronta) return;
-    const finish = () => onDone();
-    window.addEventListener("afterprint", finish);
-    let frame = requestAnimationFrame(() => {
-      frame = requestAnimationFrame(() => window.print());
-    });
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("afterprint", finish);
-    };
-  }, [logoPronta, onDone]);
-
   const { resumo } = carteira;
-  const indicadores = [
-    { label: "Itens na carteira", value: String(resumo.itens), tone: "" },
-    { label: "Valor total pendente", value: formatCurrency(resumo.valorTotal), tone: "" },
+  const indicadores: PrintStat[] = [
+    { label: "Itens na carteira", value: String(resumo.itens) },
+    { label: "Valor total pendente", value: formatCurrency(resumo.valorTotal) },
     { label: "Atrasados", value: String(resumo.atrasados), tone: "text-danger" },
     { label: "Com falta de material", value: String(resumo.comMaterialPendente), tone: "text-warning" },
   ];
 
-  return createPortal(
-    <div className="bg-white p-2 text-[10px] text-foreground">
-      <header className="flex items-end justify-between gap-4 border-b-2 border-primary pb-2">
-        <div className="flex items-end gap-4">
-          <img
-            src="/brand/logo.png"
-            alt="LANX Cables"
-            className="h-10 w-auto"
-            onLoad={() => setLogoPronta(true)}
-            onError={() => setLogoPronta(true)}
-          />
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-primary">LANX · Produção</p>
-            <h1 className="font-display text-xl font-semibold">Carteira de pedidos</h1>
-            <p className="text-muted-foreground">
-              Período de {formatDateBR(carteira.dataInicio)} a {formatDateBR(carteira.dataFim)}
-              {filtrosTabela ? ` · ${filtrosTabela}` : ""}
-            </p>
-          </div>
-        </div>
-        <p className="text-right text-[10px] text-muted-foreground">
-          Gerado em {new Date().toLocaleString("pt-BR")}
-          <br />
+  return (
+    <PrintReport
+      kicker="LANX · Produção"
+      title="Carteira de pedidos"
+      subtitle={
+        <>
+          Período de {formatDateBR(carteira.dataInicio)} a {formatDateBR(carteira.dataFim)}
+          {filtrosTabela ? ` · ${filtrosTabela}` : ""}
+        </>
+      }
+      meta={
+        <>
           Dados do ERP de {formatDataHora(carteira.consultadoEm)}
           <br />
           Em vermelho: previsão vencida ou material previsto para depois da entrega
-        </p>
-      </header>
-
-      <section className="mt-3 grid grid-cols-4 gap-2">
-        {indicadores.map((i) => (
-          <div key={i.label} className="rounded-md border border-border px-3 py-2">
-            <p className="text-[10px] text-muted-foreground">{i.label}</p>
-            <p className={`font-display text-base font-semibold tabular-nums ${i.tone}`}>{i.value}</p>
-          </div>
-        ))}
-      </section>
-
+        </>
+      }
+      stats={indicadores}
+      onDone={onDone}
+    >
       <section className="mt-4">
         <h2 className="mb-1 font-semibold">
           Pedidos ({itens.length}){itens.length !== resumo.itens ? ` de ${resumo.itens}` : ""} · por previsão de entrega
@@ -162,7 +114,6 @@ export function CarteiraRelatorioImpressao({ carteira, itens, filtrosTabela, onD
           ))}
         </table>
       </section>
-    </div>,
-    root
+    </PrintReport>
   );
 }

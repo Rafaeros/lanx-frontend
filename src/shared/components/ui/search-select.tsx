@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Check, ChevronDown, Loader2, Search, X } from "lucide-react";
+import { Check, ChevronDown, Loader2, Plus, Search, X } from "lucide-react";
 import { cn, normalizeSearch } from "@/shared/lib/utils";
 
 export interface SearchSelectOption {
@@ -28,6 +28,10 @@ export interface SearchSelectProps {
   className?: string;
   "aria-label"?: string;
   "aria-describedby"?: string;
+  /** Cadastro rápido: mostra "Cadastrar …" no rodapé da lista e recebe o texto buscado. */
+  onCreate?: (termo: string) => void;
+  /** Rótulo do cadastro quando não há busca (ex.: "Novo departamento"). */
+  createLabel?: string;
 }
 
 /** Altura máxima da lista; abaixo disso de espaço livre, o popover abre para cima. */
@@ -35,7 +39,8 @@ const POPOVER_SPACE = 320;
 
 /**
  * Select de uma opção com busca (combobox ARIA). Teclado: setas, Home/End, Enter seleciona,
- * Esc fecha sem fechar o modal em volta. A busca ignora acentos e maiúsculas.
+ * Esc fecha sem fechar o modal em volta. A busca ignora acentos e maiúsculas. Com `onCreate`, o
+ * rodapé oferece o cadastro rápido do que foi buscado (Enter também, quando nada foi encontrado).
  */
 export const SearchSelect = React.forwardRef<HTMLButtonElement, SearchSelectProps>(function SearchSelect(
   {
@@ -55,6 +60,8 @@ export const SearchSelect = React.forwardRef<HTMLButtonElement, SearchSelectProp
     className,
     "aria-label": ariaLabel,
     "aria-describedby": ariaDescribedBy,
+    onCreate,
+    createLabel = "Cadastrar novo",
   },
   ref
 ) {
@@ -119,6 +126,12 @@ export const SearchSelect = React.forwardRef<HTMLButtonElement, SearchSelectProp
     close(true);
   };
 
+  const criar = () => {
+    const termo = query.trim();
+    close();
+    onCreate?.(termo);
+  };
+
   const onSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const last = filtered.length - 1;
     switch (e.key) {
@@ -141,6 +154,8 @@ export const SearchSelect = React.forwardRef<HTMLButtonElement, SearchSelectProp
       case "Enter":
         e.preventDefault();
         if (filtered[active]) select(filtered[active]);
+        // nada na lista: Enter cadastra o que foi digitado
+        else if (onCreate && query.trim()) criar();
         break;
       case "Escape":
         // Não deixa o Esc chegar ao Dialog: fecha só o select
@@ -281,6 +296,23 @@ export const SearchSelect = React.forwardRef<HTMLButtonElement, SearchSelectProp
               })
             )}
           </ul>
+
+          {onCreate && (
+            <div className="border-t border-border p-1">
+              <button
+                type="button"
+                // pointerdown antes do blur do input: o clique não se perde
+                onPointerDown={(e) => e.preventDefault()}
+                onClick={criar}
+                className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm font-medium text-primary transition-colors hover:bg-primary/10 focus-visible:bg-primary/10 focus-visible:outline-none"
+              >
+                <Plus className="h-4 w-4 shrink-0" />
+                <span className="min-w-0 truncate">
+                  {query.trim() ? <>Cadastrar “{query.trim()}”</> : createLabel}
+                </span>
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

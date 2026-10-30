@@ -1,5 +1,4 @@
-import * as React from "react";
-import { createPortal } from "react-dom";
+import { PrintReport, printTd, printTh, type PrintStat } from "@/shared/components/print";
 import type { IqfFornecedorResponse, IqfResponse } from "../types";
 import {
   FAIXA_CRITERIO,
@@ -23,73 +22,35 @@ export interface IqfRelatorioImpressaoProps {
   onDone: () => void;
 }
 
-const th = "border-b border-border px-2 py-1.5 text-left font-semibold";
-const td = "border-b border-border px-2 py-1 tabular-nums";
+const th = printTh;
+const td = printTd;
 
-/**
- * Relatório do IQF para "Salvar como PDF": renderizado fora do app (#print-root),
- * visível só na impressão (ver @media print em app.css), sempre no tema claro.
- */
+/** Relatório do IQF para "Salvar como PDF" (PrintReport), com o gráfico mensal e os fornecedores. */
 export function IqfRelatorioImpressao({ iqf, fornecedores, filtrosTabela, onDone }: IqfRelatorioImpressaoProps) {
-  const [root] = React.useState(() => {
-    const el = document.createElement("div");
-    el.id = "print-root";
-    return el;
-  });
-
-  React.useEffect(() => {
-    document.body.appendChild(root);
-    const finish = () => onDone();
-    window.addEventListener("afterprint", finish);
-    // dois frames: o gráfico (SVG de largura fixa) já está no DOM quando o diálogo abre
-    let frame = requestAnimationFrame(() => {
-      frame = requestAnimationFrame(() => window.print());
-    });
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("afterprint", finish);
-      root.remove();
-    };
-  }, [root, onDone]);
-
   const faixa = iqf.classificacao?.faixa;
-  const indicadores = [
+  const indicadores: PrintStat[] = [
     { label: "IQF geral", value: formatPercentual(iqf.percentualNoPrazo), tone: faixa ? FAIXA_TONE[faixa].text : "" },
     { label: "Classificação", value: faixa ? FAIXA_LABELS[faixa] : "Sem avaliação", tone: faixa ? FAIXA_TONE[faixa].text : "" },
-    { label: "Entregas avaliadas", value: String(iqf.entregasAvaliadas), tone: "" },
+    { label: "Entregas avaliadas", value: String(iqf.entregasAvaliadas) },
     { label: "No prazo", value: String(iqf.entregasNoPrazo), tone: "text-success" },
     { label: "Atrasadas", value: String(iqf.entregasAtrasadas), tone: "text-danger" },
   ];
 
-  return createPortal(
-    <div className="bg-white p-2 text-[11px] text-foreground">
-      <header className="flex items-end justify-between border-b-2 border-primary pb-2">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-primary">LANX · Compras</p>
-          <h1 className="font-display text-xl font-semibold">IQF de fornecedores (prazo de entrega)</h1>
-          <p className="text-muted-foreground">
-            Entrega prevista de {formatData(iqf.dataInicio)} a {formatData(iqf.dataFim)} ·{" "}
-            {rateiosTexto(iqf.rateios)} · Tolerância de
-            atraso: {diasTexto(iqf.toleranciaDias)}
-            {filtrosTabela ? ` · ${filtrosTabela}` : ""}
-          </p>
-        </div>
-        <p className="text-right text-[10px] text-muted-foreground">
-          Gerado em {new Date().toLocaleString("pt-BR")}
-          <br />
-          {FAIXA_CRITERIO}
-        </p>
-      </header>
-
-      <section className="mt-3 grid grid-cols-5 gap-2">
-        {indicadores.map((i) => (
-          <div key={i.label} className="rounded-md border border-border px-3 py-2">
-            <p className="text-[10px] text-muted-foreground">{i.label}</p>
-            <p className={`font-display text-base font-semibold tabular-nums ${i.tone}`}>{i.value}</p>
-          </div>
-        ))}
-      </section>
-
+  return (
+    <PrintReport
+      kicker="LANX · Qualidade"
+      title="IQF de fornecedores (prazo de entrega)"
+      subtitle={
+        <>
+          Entrega prevista de {formatData(iqf.dataInicio)} a {formatData(iqf.dataFim)} · {rateiosTexto(iqf.rateios)} ·
+          Tolerância de atraso: {diasTexto(iqf.toleranciaDias)}
+          {filtrosTabela ? ` · ${filtrosTabela}` : ""}
+        </>
+      }
+      meta={FAIXA_CRITERIO}
+      stats={indicadores}
+      onDone={onDone}
+    >
       <section className="mt-4 break-inside-avoid">
         <h2 className="mb-1 font-semibold">
           IQF mês a mês · meta mensal {iqf.metaMensal}%
@@ -161,7 +122,6 @@ export function IqfRelatorioImpressao({ iqf, fornecedores, filtrosTabela, onDone
           </tbody>
         </table>
       </section>
-    </div>,
-    root
+    </PrintReport>
   );
 }

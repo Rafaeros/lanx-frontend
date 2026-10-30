@@ -11,8 +11,12 @@ function filenameFrom(disposition: string | undefined, fallback: string): string
 
 /** Salva no navegador um arquivo recebido como blob (responseType: "blob"). */
 export function saveBlobResponse(response: AxiosResponse<Blob>, fallbackName: string): void {
-  const name = filenameFrom(response.headers["content-disposition"] as string | undefined, fallbackName);
-  const url = URL.createObjectURL(response.data);
+  saveBlob(response.data, filenameFrom(response.headers["content-disposition"] as string | undefined, fallbackName));
+}
+
+/** Salva um blob que já está em memória (ex.: anexo aberto no visualizador) com o nome dado. */
+export function saveBlob(blob: Blob, name: string): void {
+  const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
   link.download = name;

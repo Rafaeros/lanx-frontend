@@ -46,18 +46,8 @@ export function formatPercentual(value?: number | null): string {
   return `${new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 2 }).format(value)}%`;
 }
 
-const MESES_CURTOS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-const MESES_LONGOS = [
-  "janeiro", "fevereiro", "março", "abril", "maio", "junho",
-  "julho", "agosto", "setembro", "outubro", "novembro", "dezembro",
-];
-
-/** "2026-09" → "set/26" (short) ou "setembro de 2026" (long). */
-export function formatMes(mes: string, estilo: "short" | "long" = "short"): string {
-  const [ano, m] = mes.split("-").map(Number);
-  if (!ano || !m) return mes;
-  return estilo === "short" ? `${MESES_CURTOS[m - 1]}/${String(ano).slice(2)}` : `${MESES_LONGOS[m - 1]} de ${ano}`;
-}
+/** Mês por extenso/abreviado: vive em shared, reexportado para quem já importa daqui. */
+export { formatMes } from "@/shared/lib/date";
 
 /** "2026-09-30" → "30/09/2026". */
 export function formatData(iso: string): string {

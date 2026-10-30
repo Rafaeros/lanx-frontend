@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 
@@ -17,6 +18,12 @@ export interface DialogProps {
   scrollable?: boolean;
 }
 
+/**
+ * Diálogos abertos, do mais antigo ao mais novo. Com um modal por cima de outro (cadastro rápido),
+ * só o do topo reage ao Esc, e a rolagem da página só volta quando o último fecha.
+ */
+const pilha: symbol[] = [];
+
 export function Dialog({
   open,
   onClose,
@@ -30,23 +37,29 @@ export function Dialog({
   const titleId = React.useId();
   const descriptionId = React.useId();
 
+  // Ref: o onClose costuma ser uma função nova a cada render, e reinscrever o diálogo o tiraria do topo
+  const onCloseRef = React.useRef(onClose);
+  onCloseRef.current = onClose;
+
   React.useEffect(() => {
+    if (!open) return;
+    const id = Symbol("dialog");
+    pilha.push(id);
+    document.body.style.overflow = "hidden";
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && open) {
-        onClose();
+      if (e.key === "Escape" && pilha[pilha.length - 1] === id) {
+        onCloseRef.current();
       }
     };
-    if (open) {
-      document.body.style.overflow = "hidden";
-      window.addEventListener("keydown", handleKeyDown);
-    }
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = "unset";
+      pilha.splice(pilha.indexOf(id), 1);
+      if (pilha.length === 0) document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [open, onClose]);
+  }, [open]);
 
-  if (!open) return null;
+  if (!open || typeof document === "undefined") return null;
 
   const maxWidths = {
     sm: "max-w-sm",
@@ -59,8 +72,13 @@ export function Dialog({
     "6xl": "max-w-6xl",
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+  // Portal no <body>: um diálogo aberto de dentro de um formulário não fica com um <form> dentro do outro.
+  // O submit ainda sobe pela árvore do React até o formulário de fora, por isso é barrado aqui.
+  return createPortal(
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
+      onSubmit={(e) => e.stopPropagation()}
+    >
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-fade-in"
@@ -107,7 +125,8 @@ export function Dialog({
 
         <div className={cn(scrollable && "flex min-h-0 flex-1 flex-col")}>{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

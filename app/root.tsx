@@ -11,6 +11,7 @@ import { queryClient } from "@/shared/api/query-client";
 import { ThemeProvider, THEME_STORAGE_KEY } from "@/shared/hooks/use-theme";
 import type { Route } from "./+types/root";
 import { ToastProvider } from "@/shared/components/ui/toast";
+import { TopProgressBar } from "@/shared/components/ui/top-progress-bar";
 import "./app.css";
 
 const THEME_BOOT_SCRIPT = `(function(){try{var t=localStorage.getItem("${THEME_STORAGE_KEY}");var d=t==="dark"||(t==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);if(d)document.documentElement.classList.add("dark")}catch(e){}})();`;
@@ -57,6 +58,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light">
         <ToastProvider>
+          <TopProgressBar />
           <Outlet />
         </ToastProvider>
       </ThemeProvider>
